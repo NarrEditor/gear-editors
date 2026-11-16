@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coming soon · MIDI Editors</title>
+<style>
+  :root{--bg:#0e0f13;--panel:#161821;--panel2:#1d2030;--line:#2a2e42;--text:#e8eaf2;--muted:#8c92aa;--a:#ffb347}
+  @media (prefers-color-scheme: light){:root{--bg:#f3f2ee;--panel:#fff;--panel2:#f0eee8;--line:#dcd8cc;--text:#1c1d24;--muted:#6b6f80}}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+  a{color:inherit}
+  .top{max-width:1180px;margin:0 auto;padding:18px 20px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .back{text-decoration:none;color:var(--muted);font-weight:600}
+  .back:hover{color:var(--text)}
+  .sp{flex:1}
+  .kofi{background:#ff5e5b;color:#fff;text-decoration:none;font-weight:700;padding:9px 14px;border-radius:10px}
+  .kofi:hover{filter:brightness(1.1)}
+  .hero{max-width:1180px;margin:0 auto;padding:22px 20px 8px}
+  .tag{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:4px 12px;border-radius:99px;border:1px solid var(--a);color:var(--a);background:color-mix(in srgb,var(--a) 14%,transparent)}
+  h1{margin:10px 0 6px;font-size:2rem;letter-spacing:-.02em;line-height:1.1}
+  .hero p{margin:0;color:var(--muted);max-width:60ch}
+
+  /* screenshot of the real editor, shown dimmed behind the banner */
+  .stage{max-width:1180px;margin:18px auto 40px;padding:0 20px;position:relative}
+  .shot{pointer-events:none;user-select:none;-webkit-user-select:none;position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);line-height:0}
+  .shot img{display:block;width:100%;height:auto;filter:saturate(.75) brightness(.78)}
+
+  /* banner over the preview */
+  .banner{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:min(520px,calc(100% - 40px));text-align:center;
+          background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--a);border-radius:16px;padding:22px 24px;
+          box-shadow:0 20px 60px -10px #000d;backdrop-filter:blur(6px)}
+  .banner h2{margin:0 0 6px;font-size:1.5rem;letter-spacing:-.01em}
+  .banner p{margin:0 0 14px;color:var(--muted)}
+  .banner .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .banner a{text-decoration:none;font-weight:700;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel2)}
+  .banner a.k{background:#ff5e5b;border-color:#ff5e5b;color:#fff}
+  .banner a:hover{filter:brightness(1.12)}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="back" href="index.html">← All editors</a>
+  <span class="sp"></span>
+  <a class="kofi" href="https://ko-fi.com/synthseditor" target="_blank" rel="noopener">☕ Support on Ko-fi</a>
+</div>
+
+<section class="hero">
+  <span class="tag">Coming soon</span>
+  <h1 id="title">Editor</h1>
+  <p id="sub">This editor is still being built.</p>
+</section>
+
+<div class="stage">
+  <div class="shot" aria-hidden="true"><img id="shot" alt="" width="1600" height="1000"></div>
+  <div class="banner">
+    <h2>Coming soon</h2>
+    <p>This editor is still being built. What you see here is a screenshot of how it looks, and nothing on it works yet.</p>
+    <div class="row">
+      <a href="index.html">← Back to the hub</a>
+      <a class="k" href="https://ko-fi.com/synthseditor" target="_blank" rel="noopener">☕ Help it get finished</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const CFG = {
+  microkorg: { name: "microKORG", color: "#ff6b57", img: "img/microkorg.webp",
+    sub: "A full editor for the Korg microKORG: oscillators, filter, envelopes, LFOs, virtual patch, effects, arpeggiator and a patch library." },
+  sy22: { name: "SY-22", color: "#a78bfa", img: "img/sy22.webp",
+    sub: "A voice editor for the Yamaha SY-22: four elements with envelopes, vector control and the dynamic vector, plus a voice library." },
+  vg88: { name: "VG-88", color: "#7ee081", img: "img/vg88.webp",
+    sub: "An editor for the Roland VG-88: the COSM guitar and amp models, every effect, the signal chain and a patch library." }
+};
+const q = new URLSearchParams(location.search).get("e");
+const c = CFG[q] || CFG.microkorg;
+document.documentElement.style.setProperty("--a", c.color);
+document.title = "Coming soon \u00b7 " + c.name + " Editor";
+document.getElementById("title").textContent = c.name + " Editor";
+document.getElementById("sub").textContent = c.sub;
+const im = document.getElementById("shot"); im.src = c.img; im.alt = "Screenshot of the " + c.name + " Editor";
+</script>
+</body>
+</html>
