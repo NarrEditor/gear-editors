@@ -254,7 +254,7 @@ body.wide .egl{font-size:calc(8px*var(--k))}
         <path d="M208 18C203 11 196 8 188 8C174 8 164 17 164 26C164 35 174 44 188 44C196 44 203 41 208 34"/>
         <path d="M252 14C248 10 242 8 236 8C226 8 222 13 222 18C222 24 229 26 236 26C244 26 250 28 250 34C250 40 244 44 236 44C228 44 222 41 219 36"/>
       </svg>
-      <span class="bmeta"><b>EDITOR</b><button type="button" class="ver" id="ver" aria-expanded="false" aria-controls="about">v1.4</button></span>
+      <span class="bmeta"><b>EDITOR</b><button type="button" class="ver" id="ver" aria-expanded="false" aria-controls="about">v1.6</button></span>
       <div class="about" id="about" role="dialog" aria-label="About this editor" hidden>
         <h3>QUICK SETUP</h3>
         <ol>
@@ -268,7 +268,7 @@ body.wide .egl{font-size:calc(8px*var(--k))}
           <li><strong>Morph:</strong> press MORPH, click a patch for A and another for B, then slide to blend. Selectors switch at the halfway point.</li>
           <li><strong>Synth:</strong> scroll over a fader to move it, double-click to return it to the hardware position. The gear holds master tune, transpose, bend range and MIDI Control (needed for the editor to follow the synth&rsquo;s own sliders).</li>
         </ul>
-        <p>Made by Narr</p>
+        <p>Made by @capmisteri &middot; <a href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener" style="color:inherit;font-weight:700">&#9749; Support on Ko-fi</a></p>
       </div>
     </h1>
     <div class="lcd" id="lcdBox"><span id="lcdMain">INIT PATCH</span></div>
@@ -1317,6 +1317,22 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);  /* w
 applyAll(INIT,false);slots();updMorph();layout();drawKeys();
 connect(true);  /* look for a Reface CS straight away
    (the browser asks for MIDI / SysEx permission the first time) */
+})();
+</script>
+<style id="nbbCss">
+.nbb{position:fixed;left:12px;top:10px;z-index:2147483000;display:flex;gap:8px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s,transform .18s;font:600 13px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.nbb.on{opacity:1;transform:none;pointer-events:auto}
+.nbb a{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;text-decoration:none;color:#f3f1ec;background:#1b1d27ee;border:1px solid #ffffff33;box-shadow:0 6px 20px #0008;backdrop-filter:blur(6px);white-space:nowrap}
+.nbb a:hover{filter:brightness(1.18)}
+.nbb a.k{background:#ff5e5bf2;border-color:#ff5e5b;color:#fff}
+</style>
+<div class="nbb" id="nbb" aria-label="Site links"><a href="../" id="nbbBack">&larr; Back to Editors</a><a class="k" href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener">&#9749; Support on Ko-fi</a></div>
+<script>
+(function(){var b=document.getElementById('nbb'),t=0,near=false;
+function set(on){clearTimeout(t);if(on){b.classList.add('on')}else{t=setTimeout(function(){b.classList.remove('on')},350)}}
+addEventListener('mousemove',function(e){var inB=b.contains(e.target),zone=e.clientX<150&&e.clientY<90;near=zone||inB;set(near||(b.classList.contains('on')&&inB))},{passive:true});
+addEventListener('pointerdown',function(e){if(e.pointerType==='touch'&&e.clientX<90&&e.clientY<70){set(true);setTimeout(function(){set(false)},4000)}},{passive:true});
+document.addEventListener('mouseleave',function(){set(false)});
 })();
 </script>
 </body>
