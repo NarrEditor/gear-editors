@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+  Reface CS Editor (c) 2026 @capmisteri. All rights reserved.
+  You may use this editor in your browser. Copying, modifying or redistributing
+  it, in whole or in part, requires written permission. See LICENSE.
+  build-id rcs-capmisteri-7f3a91c2
+-->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -254,7 +260,7 @@ body.wide .egl{font-size:calc(8px*var(--k))}
         <path d="M208 18C203 11 196 8 188 8C174 8 164 17 164 26C164 35 174 44 188 44C196 44 203 41 208 34"/>
         <path d="M252 14C248 10 242 8 236 8C226 8 222 13 222 18C222 24 229 26 236 26C244 26 250 28 250 34C250 40 244 44 236 44C228 44 222 41 219 36"/>
       </svg>
-      <span class="bmeta"><b>EDITOR</b><button type="button" class="ver" id="ver" aria-expanded="false" aria-controls="about">v1.6</button></span>
+      <span class="bmeta"><b>EDITOR</b><button type="button" class="ver" id="ver" aria-expanded="false" aria-controls="about">v1.7</button></span>
       <div class="about" id="about" role="dialog" aria-label="About this editor" hidden>
         <h3>QUICK SETUP</h3>
         <ol>
@@ -269,6 +275,7 @@ body.wide .egl{font-size:calc(8px*var(--k))}
           <li><strong>Synth:</strong> scroll over a fader to move it, double-click to return it to the hardware position. The gear holds master tune, transpose, bend range and MIDI Control (needed for the editor to follow the synth&rsquo;s own sliders).</li>
         </ul>
         <p>Made by @capmisteri &middot; <a href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener" style="color:inherit;font-weight:700">&#9749; Support on Ko-fi</a></p>
+        <p style="margin-top:2px;opacity:.7;font-size:11px">&copy; 2026 @capmisteri. All rights reserved.</p>
       </div>
     </h1>
     <div class="lcd" id="lcdBox"><span id="lcdMain">INIT PATCH</span></div>
@@ -1333,6 +1340,27 @@ function set(on){clearTimeout(t);if(on){b.classList.add('on')}else{t=setTimeout(
 addEventListener('mousemove',function(e){var inB=b.contains(e.target),zone=e.clientX<150&&e.clientY<90;near=zone||inB;set(near||(b.classList.contains('on')&&inB))},{passive:true});
 addEventListener('pointerdown',function(e){if(e.pointerType==='touch'&&e.clientX<90&&e.clientY<70){set(true);setTimeout(function(){set(false)},4000)}},{passive:true});
 document.addEventListener('mouseleave',function(){set(false)});
+})();
+</script>
+<style id="rcsOfficialCss">
+#rcsUnof{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:2147482000;max-width:min(680px,calc(100vw - 24px));display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:12px;background:#1b1d27f2;border:1px solid #ff5e5b;color:#f3f1ec;font:600 13px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-shadow:0 8px 28px #000a}
+#rcsUnof a{color:#ff8f8c;text-decoration:underline}#rcsUnof button{all:unset;cursor:pointer;padding:2px 6px;opacity:.7}#rcsUnof button:hover{opacity:1}
+:root{--rcs-sig:capmisteri-2026-b41d9e}
+</style>
+<script>
+/* (c) 2026 @capmisteri. All rights reserved. Reface CS Editor, official copy. See LICENSE. */
+(function(){
+ var OFFICIAL_HOSTS=['capmisteri.github.io'];            /* official site: https://capmisteri.github.io/gear-editors/ */
+ var OFFICIAL_URL='https://capmisteri.github.io/gear-editors/', OFFICIAL_PATH='/gear-editors/';
+ window.__rcsId='rcs-capmisteri-7f3a91c2';
+ try{console.log('%cReface CS Editor%c (c) 2026 @capmisteri. All rights reserved.','font-weight:700','');}catch(e){}
+ var h=location.hostname,local=location.protocol==='file:'||!h||h==='localhost'||h==='127.0.0.1'||h==='[::1]';
+ if(local||(OFFICIAL_HOSTS.indexOf(h)>-1&&location.pathname.indexOf(OFFICIAL_PATH)===0))return;
+ addEventListener('DOMContentLoaded',function(){
+  var d=document.createElement('div');d.id='rcsUnof';d.setAttribute('role','note');
+  d.innerHTML='<span>This is an unofficial copy of the Reface CS Editor by @capmisteri. Get the original at <a href="'+OFFICIAL_URL+'" rel="noopener">'+OFFICIAL_URL.replace('https://','')+'</a>. If it helps you, <a href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener">&#9749; support the author on Ko-fi</a>.</span><button type="button" aria-label="Dismiss">✕</button>';
+  d.querySelector('button').onclick=function(){d.remove()};document.body.appendChild(d);
+ });
 })();
 </script>
 </body>
