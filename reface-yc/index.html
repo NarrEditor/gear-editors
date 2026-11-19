@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<!--
+  Reface YC Editor (c) 2026 @capmisteri. All rights reserved.
+  You may use this editor in your browser. Copying, modifying or redistributing
+  it, in whole or in part, requires written permission. See LICENSE.
+  build-id ryc-capmisteri-2b6e5d04
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@600;700&family=League+Gothic&family=Russo+One&display=swap" rel="stylesheet">
+<title>Reface YC Editor & Librarian</title>
+<style>
+:root{color-scheme:dark;--bg:#0f1011;--panel:#1d1f22;--ink:#e9e7e1;--mute:#8d8f94;--line:#35373c;--acc:#ff4036;--lcdbg:#04141b;--lcd:#63d0ea;
+--c1:#2f7bff;--c2:#2ecc71;--c3:#b6e12e;--c4:#ff9a1f;--c5:#ff3b30}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{max-width:1180px;margin:0 auto;padding:14px;display:grid;gap:12px}
+.head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,40%) minmax(0,1fr);grid-template-areas:"title lcd midi";gap:12px;align-items:center}
+.title{grid-area:title;justify-self:start;margin:0;position:relative;display:flex;align-items:center;gap:10px;min-width:0}
+.logo{height:42px;width:auto;flex:none;color:var(--ink);overflow:visible}
+.logo path{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bmeta{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.bmeta b{font-size:11px;font-weight:600;letter-spacing:.34em;color:var(--acc);line-height:1}
+.ver{padding:1px 9px;font-size:10.5px;line-height:1.5;border-radius:999px;background:none;color:var(--mute)}
+.ver:hover,.ver.on{border-color:var(--acc);color:var(--ink)}
+.about{position:absolute;left:0;top:calc(100% + 10px);width:min(440px,calc(100vw - 28px));max-height:calc(100vh - 110px);overflow-y:auto;z-index:40;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.65);font-size:12px;line-height:1.45;font-weight:400;letter-spacing:0}
+.about[hidden]{display:none}
+.about h3{margin:0 0 6px;font-size:10px;letter-spacing:.16em;color:var(--mute);font-weight:600}
+.about ol,.about ul{margin:0 0 10px;padding-left:18px;display:grid;gap:3px}
+.about p{margin:0;color:var(--mute);font-size:11px}
+.about p+p{margin-top:2px}
+.lcd{grid-area:lcd}
+.midi{grid-area:midi;justify-self:end;max-width:100%;min-width:0;display:flex;flex-direction:row;align-items:center;gap:6px}
+.midi .box{min-width:0}
+@media(max-width:1000px){.head{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"title midi" "lcd lcd"}}
+@media(max-width:560px){.head{grid-template-columns:minmax(0,1fr);grid-template-areas:"title" "midi" "lcd"}.midi{justify-self:stretch}}
+.lcd{position:relative;background:var(--lcdbg);color:#fff;border:1px solid #000;box-shadow:inset 0 0 0 2px #0d3340;border-radius:6px;padding:10px 14px;font:600 20px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;display:flex;justify-content:center;align-items:center;align-self:stretch;min-height:64px;text-align:center;gap:12px;overflow:hidden;white-space:nowrap}
+.lcd:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--pc,transparent);pointer-events:none}
+.lcd #lcdMain{overflow:hidden;text-overflow:ellipsis;min-width:0;font:400 46px/1.05 "Swiss 911 Extra Compressed","Swiss911 XCm BT","League Gothic","Oswald","Arial Narrow","Impact",sans-serif;letter-spacing:.05em}  /* Swiss 911 XCm is a paid font: used if installed, otherwise the free League Gothic */
+.lcd.param #lcdMain{font:600 20px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em}  /* parameter read-out keeps the original look */
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.mbox{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.mrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.mrow select{width:76px;min-width:0;text-overflow:ellipsis}
+select,button,input[type=text]{font:inherit;color:var(--ink);background:#2a2c30;border:1px solid var(--line);border-radius:4px;padding:5px 9px}
+button{cursor:pointer}button:hover{border-color:var(--acc)}
+.dot{width:10px;height:10px;border-radius:50%;background:#666;display:inline-block}
+.dot.ok{background:#3bd16f;box-shadow:0 0 6px #3bd16f}
+.mon{font:11px ui-monospace,Menlo,Consolas,monospace;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.synth{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;background:linear-gradient(180deg,#7d1016,#5a0b10 60%,#470a0e);border:1px solid #2a0507;border-radius:10px;padding:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 40px rgba(0,0,0,.35)}  /* the red body of the hardware */
+.sec{background:#141011;border:1px solid #060303;border-radius:6px;padding:8px 12px 10px;box-shadow:0 1px 0 rgba(255,255,255,.08)}  /* the black control strip */
+.sec h2{margin:0 0 10px;font-size:10px;letter-spacing:.16em;color:var(--mute);text-align:center;font-weight:600}
+.ctl{display:flex;gap:14px;justify-content:center;align-items:flex-start}
+.sl,.selw{display:flex;flex-direction:column;align-items:center;gap:6px;user-select:none;touch-action:none}
+.sl{width:58px}
+.sl.ft{width:50px}  /* the nine footage faders sit a little closer together */
+.sl label,.selw label{font-size:9px;letter-spacing:.08em;color:var(--mute);text-align:center;white-space:nowrap}
+.tr{position:relative;width:50px;height:128px;cursor:ns-resize}  /* was 148px: shorter panel, to match the CS and CP */
+.tr:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;background:#050505;border-radius:3px;box-shadow:0 0 0 1px #3a3c41}
+.tk{position:absolute;left:0;right:0;height:1px;margin-top:-.5px;pointer-events:none;background:linear-gradient(90deg,#3a3c41 calc(50% - 8px),transparent calc(50% - 8px) calc(50% + 8px),#3a3c41 calc(50% + 8px))}  /* graduation lines either side of the slot, same grey as the slot outline */
+.cap{position:absolute;left:50%;width:38px;height:var(--ch,18px);margin-left:-19px;bottom:calc(var(--p,0) * (100% - var(--ch,18px)));background:linear-gradient(var(--cc1,#5d6066),var(--cc2,#2b2d31));border:1px solid #777;border-radius:3px;box-shadow:0 2px 3px #000}
+.cap:after{content:"";position:absolute;left:4px;right:4px;top:50%;height:2px;background:#d0d0d0}
+.hwc{--ch:22px;--cw:40px}
+.hwc.ft{--cw:43px}
+.hwc .cap{width:var(--cw);margin-left:calc(var(--cw) / -2)}
+/* the YC's own fader caps: glossy tabs with a lighter top face, a soft crease and a rounded front (volume keeps the plain CS cap) */
+.hwc .cap:not(.ghost){background:linear-gradient(var(--cc1) 0 30%,color-mix(in srgb,var(--cc1) 55%,var(--cc2)) 40%,var(--cc2) 52% 100%);border:1px solid rgba(0,0,0,.65);border-radius:6px 6px 4px 4px / 7px 7px 4px 4px;box-shadow:0 3px 4px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.4),inset 0 -3px 4px rgba(0,0,0,.4),inset 1px 0 0 rgba(255,255,255,.12),inset -1px 0 0 rgba(0,0,0,.3)}
+.hwc .cap:not(.ghost):before{content:"";position:absolute;left:4px;right:4px;top:2px;height:7px;border-radius:4px;background:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.08));pointer-events:none}
+.hwc .cap:not(.ghost):after{display:none}
+.hwc .ghost{border-radius:6px}
+.ghost{display:none;background:#000;border:1px solid #000;box-shadow:0 0 6px 3px rgba(0,0,0,.85);opacity:.85;filter:blur(3.2px);pointer-events:none;transition:opacity 2s linear,filter 2s linear}
+.ghost.show{display:block}
+.ghost.aged{opacity:.3;filter:blur(3.9px)}  /* once the editor fader leaves the hardware position: fades from full opacity to .4 and blurs 20% more, over 2s */
+.ghost:after{background:#000}
+.opt.hw .led{outline:2px solid rgba(255,255,255,.75);outline-offset:2px}
+.sel{display:flex;flex-direction:column;justify-content:space-between;height:128px}
+.opt{display:flex;align-items:center;gap:7px;background:none;border:0;padding:0;height:22px;color:var(--ink);font-size:10px;letter-spacing:.06em;text-align:left}
+.opt:hover{border:0}
+.led{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid #000;background:color-mix(in srgb,var(--c) 22%,#0c0c0c)}
+.opt.on .led{background:var(--c);box-shadow:0 0 9px var(--c)}
+.opt b{font-weight:600;white-space:nowrap}
+/* two-position rocker switch (vibrato / chorus, percussion on-off and type) */
+/* one rocker button: click anywhere to flip it. The lit half is blurred into the dark half, like the crease of a single cap */
+.rk{position:relative;display:flex;flex-direction:column;width:56px;height:128px;border:1px solid #000;border-radius:7px;overflow:hidden;cursor:pointer;background:color-mix(in srgb,var(--c) 24%,#0d0808);box-shadow:0 0 0 1px #3a3c41,inset 0 -6px 10px rgba(0,0,0,.45);user-select:none}
+.rk .lit{position:absolute;left:-14px;right:-14px;height:62%;background:linear-gradient(var(--c),color-mix(in srgb,var(--c) 78%,#000));filter:blur(9px);transition:opacity .28s ease}
+.rk .lit.t{top:-16px}
+.rk .lit.b{bottom:-16px;background:linear-gradient(color-mix(in srgb,var(--c) 78%,#000),var(--c))}
+.rk .gl{position:absolute;left:5px;right:5px;height:34%;border-radius:5px;background:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.12) 55%,rgba(255,255,255,0));filter:blur(1.2px);transition:opacity .28s ease;pointer-events:none}  /* white reflection on the active half */
+.rk .gl.t{top:5px}
+.rk .gl.b{bottom:5px;transform:scaleY(-1)}
+/* the light fades out on one half while it fades in on the other */
+.rk .lit.b,.rk .gl.b,.rk.bot .lit.t,.rk.bot .gl.t{opacity:0}
+.rk.bot .lit.b,.rk.bot .gl.b{opacity:1}
+.rk span{position:relative;z-index:1;flex:1;display:grid;place-items:center;font-size:9px;font-weight:700;letter-spacing:.06em;color:#a79a9a;pointer-events:none;transition:color .16s}
+.rk span.on{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.rk span.hw{outline:2px solid rgba(255,255,255,.75);outline-offset:-5px;border-radius:5px}
+.rk:hover{border-color:var(--acc)}
+/* WAVE knob */
+.krow{display:flex;align-items:center;gap:8px}
+.knob{position:relative;flex:none;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#4a4c52,#0c0c0e);border:1px solid #666;box-shadow:0 3px 6px #000;cursor:pointer;transition:transform .12s}
+.knob i{position:absolute;left:50%;top:50%;width:50%;height:2px;margin-top:-1px;background:#e9e7e1;border-radius:1px}
+.dropbox{padding:12px 10px 10px}
+.lib h2{margin:0 0 12px;font-size:10px;letter-spacing:.16em;color:var(--mute);font-weight:600}
+.tools{display:grid;grid-template-columns:minmax(480px,1fr) minmax(320px,640px) minmax(330px,1fr);gap:6px;margin-bottom:18px;align-items:center}  /* left buttons | morph, centred in the box | import + dice */
+.tl,.tr2{display:flex;gap:6px;align-items:center}
+.tr2{justify-content:flex-end}
+@media(max-width:1250px){.tools{display:flex;flex-wrap:wrap}.tl,.tr2{display:contents}.morph{flex:1 1 360px;min-width:320px;width:auto!important}}  /* narrow windows: back to a wrapping row */
+.tools input[type=text]{width:170px}
+.tools label{display:flex;gap:6px;align-items:center}
+.slots{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;user-select:none;-webkit-user-select:none}
+@media(max-width:820px){.slots{grid-template-columns:repeat(4,1fr)}}
+.slot{background:#141517;border:1px solid var(--line);border-radius:4px;padding:14px 6px 6px;min-height:62px;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-user-drag:element}
+.slot[draggable="true"]{cursor:grab}
+.slot b{position:absolute;top:4px;left:9px;font-size:9px;color:var(--mute);z-index:1}
+.slot.col:before{content:"";position:absolute;left:0;top:0;bottom:0;width:42%;background:linear-gradient(90deg,color-mix(in srgb,var(--sc) 26%,transparent),transparent);pointer-events:none}
+.slot.col span,.slot.col b{text-shadow:0 0 3px #000,0 0 7px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.7)}
+.slot.col:after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--sc);pointer-events:none}
+.slot span{position:relative;z-index:1;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;max-width:100%;text-align:center;font-size:13px;line-height:1.08;font-weight:700;white-space:normal;overflow-wrap:break-word;overflow:hidden}  /* multi-word names stack on separate lines */
+.slot em.mb{position:absolute;top:3px;right:7px;z-index:1;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--acc);text-shadow:0 0 4px #000}
+.slot.empty span{opacity:.35}
+.slot.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.slot.ms{border-color:color-mix(in srgb,var(--acc) 65%,transparent);background:color-mix(in srgb,var(--acc) 16%,#141517)}  /* extra slots picked with Shift */
+.slot.drag{opacity:.35}
+.slot.over{border-color:var(--acc);background:#1b2a31;box-shadow:0 0 0 2px var(--acc)}
+.slots.sorting .slot *{pointer-events:none}
+body.sorting,body.sorting *{user-select:none!important;-webkit-user-select:none!important;cursor:grabbing!important}
+.note{margin:8px 0 0;color:var(--mute);font-size:11px}
+#kbd{position:relative;display:flex;height:128px;background:#000;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.wk{flex:1;background:#e9e7e1;border-right:1px solid #222}
+.bk{position:absolute;top:0;height:56%;background:#111;border:1px solid #000;border-radius:0 0 3px 3px;z-index:1}
+#kbd{cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+
+/* ---- library toolbar ---- */
+.tools button.big{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;font-size:15px;font-weight:600}
+.tools button.big svg{width:24px;height:24px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tools button.big svg circle{fill:currentColor;stroke:none}
+.tools button{transition:background-color .2s,border-color .2s,color .2s}
+.tools button.ok{background:#1e7a3e;border-color:#3bd16f;color:#fff}
+.tools button.bad{background:#8a2420;border-color:#ff5a4f;color:#fff}
+.dd{position:relative}
+.ddmenu{position:absolute;top:calc(100% + 4px);left:0;min-width:150px;z-index:30;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px;box-shadow:0 8px 22px rgba(0,0,0,.65);display:grid;gap:2px}
+.ddmenu[hidden]{display:none}
+.ddmenu button{width:100%;text-align:left;border:0;background:none;padding:6px 10px}
+.ddmenu button:hover{background:#2a2c30}
+.dropHint{margin-left:auto;padding:6px 10px;border:1px dashed var(--line);border-radius:6px;color:var(--mute);font-size:11px;white-space:nowrap}
+.dropbox.filedrop{border-color:var(--acc)}
+.dropbox.filedrop .dropHint{border-color:var(--acc);color:var(--ink)}
+.slot input.rn{width:100%;font-size:14px;font-weight:700;text-align:center;padding:1px 4px;border-color:var(--acc);user-select:text;-webkit-user-select:text}
+
+button:disabled{opacity:.35;cursor:default}
+button:disabled:hover{border-color:var(--line)}
+.tools button.sq{width:46px;height:46px;padding:0;justify-content:center}
+.tools button.pg{width:46px;height:38px;padding:0;display:inline-grid;place-items:center}
+.tools button.pg svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.tools button.pg.dover{border-color:var(--acc);background:#1b2a31}
+.pgn{min-width:44px;text-align:center;font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+
+/* ---- morph crossfader (octatrack style) ---- */
+.morph{width:100%;height:46px;display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:0;margin:0}
+.mtop{display:flex;justify-content:center;align-items:center;height:15px}  /* sits in the toolbar row, same height as the dice button */
+.mbtn{align-self:center;background:none;border:1px solid transparent;border-radius:999px;padding:0 12px;font-size:10px;line-height:15px;font-weight:700;letter-spacing:.34em;text-indent:.34em;color:var(--mute)}
+.mbtn:hover{color:var(--ink)}
+.mbtn.on{color:var(--acc);border-color:var(--acc)}
+.mrow2{display:flex;align-items:center;gap:5px;height:28px}
+.mab{background:none;border:0;padding:0;height:28px;display:flex;align-items:center;gap:6px;color:var(--mute);flex:none}
+.mab:hover{border:0;color:var(--ink)}
+.mab b{flex:none;font:400 23px/1 "Russo One","Archivo Black","Arial Black",sans-serif;letter-spacing:.02em}
+.mab{flex:0 1 auto;min-width:0}
+.mab small{flex:0 1 auto;min-width:0;max-width:clamp(48px,6.5vw,110px);font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mbA small{text-align:right}#mbB small{text-align:left}
+.mab.set{color:var(--ink)}
+.mab.blink b{color:var(--acc);animation:mblink 1.6s ease-in-out infinite}
+@keyframes mblink{0%,100%{opacity:1}50%{opacity:.12}}
+.morph.off .mab:not(.blink):not(.set){opacity:.55}
+.mtrack{position:relative;flex:1;min-width:0;height:28px;cursor:ew-resize;touch-action:none;outline:none}
+.mtrack:before{content:"";position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;background:#050505;border-radius:4px;box-shadow:0 0 0 1px #3a3c41}
+.mtrack:after{content:"";position:absolute;left:50%;top:4px;bottom:4px;width:1px;background:#3a3c41}
+.mtrack:focus-visible .mcap{border-color:var(--acc)}
+.morph.off .mtrack{opacity:.35;pointer-events:none}
+.mcap{position:absolute;top:50%;width:46px;height:24px;margin-top:-12px;left:calc(var(--t,0) * (100% - 46px));z-index:1;background:linear-gradient(#6a6d73,#2b2d31);border:1px solid #777;border-radius:4px;box-shadow:0 2px 4px #000}
+.mcap:after{content:"";position:absolute;top:4px;bottom:4px;left:50%;width:2px;margin-left:-1px;background:#d0d0d0}
+
+/* ---- settings menu (top right of the editor) ---- */
+.setwrap{position:relative;display:flex;justify-content:flex-end;flex:none}
+.gear{width:36px;height:36px;padding:0;display:grid;place-items:center;border-radius:50%}
+.gear svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gear.on{border-color:var(--acc);color:var(--acc)}
+.setpanel{position:absolute;right:0;top:calc(100% + 8px);width:min(380px,calc(100vw - 28px));z-index:20;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.65);display:grid;gap:12px}
+.setpanel[hidden]{display:none}
+.sethead{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.16em;color:var(--mute);font-weight:600}
+.sethead .x{padding:2px 8px;line-height:1.2}
+.setgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tg{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:12px;text-align:left;background:#2a2c30}
+.tg:before{content:"";width:9px;height:9px;border-radius:50%;background:#4a4c52;flex:none}
+.tg.on{background:color-mix(in srgb,var(--acc) 20%,#1d1f22);border-color:var(--acc);color:#fff}
+.tg.on:before{background:var(--acc);box-shadow:0 0 6px var(--acc)}
+.setsel{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.setsel label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--mute)}
+.setsel select{width:100%;color:var(--ink)}
+.setfoot{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.setfoot small{color:var(--mute);font-size:10.5px;line-height:1.35}
+.setnum{display:grid;gap:8px}
+.numrow{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;font-size:12px;background:#2a2c30;border:1px solid var(--line);border-radius:4px}
+.numrow .nl{flex:1;min-width:0;line-height:1.2}
+.numrow .nl small{display:block;margin-top:2px;color:var(--mute);font-size:10px;letter-spacing:.04em}
+.numrow button{width:28px;height:28px;padding:0;display:grid;place-items:center;font-size:13px;line-height:1;background:#1d1f22;touch-action:none;user-select:none;-webkit-user-select:none}
+.numrow input{width:68px;text-align:center;font:inherit;font-size:13px;color:var(--ink);background:#1d1f22;border:1px solid var(--line);border-radius:4px;padding:5px 4px;-moz-appearance:textfield;appearance:textfield}
+.numrow input::-webkit-outer-spin-button,.numrow input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.numrow input:focus{outline:none;border-color:var(--acc)}
+.cpal{position:fixed;z-index:70;padding:9px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.7)}
+.cpal[hidden]{display:none}
+.cgrid{display:grid;grid-template-columns:repeat(5,26px);gap:7px}
+.cgrid button{width:26px;height:26px;padding:0;border-radius:50%;border:1px solid #000;background:var(--c)}
+.cgrid button:hover{border-color:#fff}
+.cgrid button.cur{outline:2px solid #fff;outline-offset:2px}
+.cfoot{display:flex;justify-content:flex-end;margin-top:8px}
+.cnote{width:30px;height:22px;padding:0;display:grid;place-items:center;border-radius:6px;background:none;color:var(--mute)}
+.cnote svg{width:15px;height:15px;fill:currentColor}
+.cnote:hover{color:var(--ink);border-color:var(--mute)}
+.cnote.has{color:var(--acc);border-color:var(--acc)}
+.cnotes{width:230px;display:grid;gap:6px}
+.cnotes .chead{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.16em;color:var(--mute);font-weight:600}
+.cnotes .chead button{width:26px;height:22px;padding:0;border-radius:6px;background:none;color:var(--mute);font-size:15px;line-height:1}
+.cnotes label{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.12em;color:var(--mute);margin-top:2px}
+.cnotes input{width:100%;box-sizing:border-box;padding:6px 8px;background:#0b0c0d;border:1px solid var(--line);border-radius:5px;color:var(--ink);font:inherit;font-size:12px}
+.cnotes input:focus{outline:none;border-color:var(--acc)}
+.tip{position:fixed;z-index:60;max-width:250px;background:#0b0c0d;border:1px solid var(--acc);border-radius:6px;padding:7px 10px;font-size:12px;line-height:1.35;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.7);pointer-events:none}
+.tip[hidden]{display:none}
+.tip{white-space:pre-line}
+
+/* ---- wide / full-screen layout (JS adds body.wide at 1500px+ and sets --k to scale controls to the window) ---- */
+:root{--k:1}
+body.wide .app{max-width:2400px}
+body.wide .synth{flex-wrap:nowrap;gap:calc(10px*var(--k));padding:calc(12px*var(--k));justify-content:center}
+body.wide .sec{flex:none;padding:calc(8px*var(--k)) calc(12px*var(--k)) calc(10px*var(--k))}
+body.wide .sec h2{font-size:calc(10px*var(--k))}
+body.wide .ctl{gap:calc(14px*var(--k))}
+body.wide .sl{width:calc(58px*var(--k))}
+body.wide .sl.ft{width:calc(50px*var(--k))}
+body.wide .sl label,body.wide .selw label{font-size:calc(9px*var(--k))}
+body.wide .tr{width:calc(50px*var(--k));height:var(--trh,calc(132px*var(--k)*1.55))}
+body.wide .cap{width:calc(38px*var(--k));margin-left:calc(-19px*var(--k))}
+body.wide .hwc .cap{width:calc(var(--cw)*var(--k));margin-left:calc(var(--cw)*var(--k)/-2)}
+body.wide .sel{height:var(--trh,calc(132px*var(--k)*1.55))}
+body.wide .opt{height:calc(22px*var(--k));font-size:calc(10px*var(--k));gap:calc(7px*var(--k))}
+body.wide .led{width:calc(14px*var(--k));height:calc(14px*var(--k))}
+body.wide .rk{width:calc(56px*var(--k));height:var(--trh,calc(132px*var(--k)*1.55))}
+body.wide .rk span{font-size:calc(9px*var(--k))}
+body.wide .knob{width:calc(54px*var(--k));height:calc(54px*var(--k))}
+body.wide .krow{gap:calc(8px*var(--k))}
+body.wide .slots{grid-template-columns:repeat(16,1fr)}
+body.wide #kbd{height:var(--kbh,calc(150px*var(--k)*1.5))}
+body.wide .slot{aspect-ratio:1/1;min-height:0}
+/* ---- arpeggiator row (under the keyboard) ---- */
+.arp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.arp .tg{padding:5px 10px;gap:7px;font-size:13px}
+.arp .dd>button{display:inline-flex;align-items:center;gap:7px}
+.arp .dd>button small{color:var(--mute);font-size:9px;letter-spacing:.1em}
+.arp .dd .ddmenu{top:auto;bottom:calc(100% + 4px);min-width:130px;max-height:min(340px,60vh);overflow-y:auto}  /* menus open upwards */
+.arp .ddmenu button.cur{color:var(--acc)}
+.arp label.bpm{display:flex;align-items:center;gap:6px;color:var(--mute);font-size:9px;letter-spacing:.1em}
+.arp input[type=number]:focus{cursor:text}  /* after a click, back to the normal text cursor for typing */
+.arp input[type=number]{cursor:ns-resize;width:64px;font:inherit;font-size:13px;color:var(--ink);background:#2a2c30;border:1px solid var(--line);border-radius:4px;padding:5px 7px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <h1 class="title">
+      <svg class="logo" viewBox="0 0 262 54" role="img" aria-label="reface YC">
+        <path d="M5 24V44M5 33C5 27 9 24 15 24"/>
+        <path d="M21 34H41C41 28 37 24 31 24C25 24 21 28 21 34C21 40 25 44 31 44C35 44 38 42 40 39"/>
+        <path d="M57 44V17C57 11 61 8 66 9M51 24H64"/>
+        <path d="M91 24V44M91 34C91 28 87 24 81 24C75 24 71 28 71 34C71 40 75 44 81 44C87 44 91 40 91 34"/>
+        <path d="M118 28C116 25 113 24 110 24C104 24 100 28 100 34C100 40 104 44 110 44C113 44 116 43 118 40"/>
+        <path d="M124 34H144C144 28 140 24 134 24C128 24 124 28 124 34C124 40 128 44 134 44C138 44 141 42 143 39"/>
+        <path d="M162 8L181 28L200 8M181 28V44"/>
+        <path d="M258 18C253 11 246 8 238 8C224 8 214 17 214 26C214 35 224 44 238 44C246 44 253 41 258 34"/>
+      </svg>
+      <span class="bmeta"><b>EDITOR</b><button type="button" class="ver" id="ver" aria-expanded="false" aria-controls="about">v1.4</button></span>
+      <div class="about" id="about" role="dialog" aria-label="About this editor" hidden>
+        <h3>QUICK SETUP</h3>
+        <ol>
+          <li>Plug the Reface YC in with USB and switch it on.</li>
+          <li>Use Chrome, Edge or Brave and allow MIDI access, including SysEx. The editor connects by itself; otherwise press <strong>Connect</strong> (choose the Reface YC as MIDI In and Out).</li>
+          <li>Move a slider on the synth: its dashed shadow shows where the hardware control sits.</li>
+        </ol>
+        <h3>IN BRIEF</h3>
+        <ul>
+          <li><strong>Library:</strong> 128 slots on 4 pages, stored in this browser (Export to back up; drop a .json or .syx to import). Double-click a slot to name it, right-click for a colour, drag to reorder (Alt/Option copies). Select a slot and press <strong>S</strong> to save into it, <strong>C</strong> or <strong>Delete</strong> to clear. Arrow keys walk the library; Shift+click or Shift+arrows selects a block of the grid (like a rectangle between two slots), Ctrl/Cmd+click picks slots one by one, Ctrl/Cmd+A selects the page. Drag any selected slot to move the whole selection (Alt/Option copies), and the landing slots preview as you hover. With several selected, Random re-rolls each patch on its own and Clear removes them all. Ctrl/Cmd+Z undoes, add Shift to redo.</li>
+          <li><strong>Morph:</strong> press MORPH, click a patch for A and another for B, then slide to blend. Switches and the wave knob change at the halfway point.</li>
+          <li><strong>Synth:</strong> footage faders work like drawbars (down = louder, 7 steps). Scroll over a fader to move it, double-click to return it to the hardware position. The gear holds master tune, transpose and MIDI Control (needed for the editor to follow the synth&rsquo;s own controls).</li>
+          <li>The OCTAVE slider is not sent over MIDI, so it is not shown here.</li>
+        </ul>
+        <p>Made by @capmisteri &middot; <a href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener" style="color:inherit;font-weight:700">&#9749; Support on Ko-fi</a></p>
+        <p style="margin-top:2px;opacity:.7;font-size:11px">&copy; 2026 @capmisteri. All rights reserved.</p>
+      </div>
+    </h1>
+    <div class="lcd" id="lcdBox"><span id="lcdMain">INIT PATCH</span></div>
+    <div class="midi">
+     <div class="box mbox">
+      <div class="mrow">
+        <span class="dot" id="dot"></span>
+        <select id="inSel"><option>MIDI In</option></select>
+        <select id="outSel"><option>MIDI Out</option></select>
+        <button id="conn">Connect</button>
+      </div>
+      <span class="mon" id="mon" title="Last MIDI message received from the selected input">IN: nothing yet</span>
+     </div>
+     <div class="setwrap" id="setWrap">
+      <div class="setpanel" id="setPanel" role="dialog" aria-label="Synth settings" hidden>
+        <div class="sethead"><span>SYNTH SETTINGS</span><button type="button" class="x" id="setClose" aria-label="Close settings">&#10005;</button></div>
+        <div class="setgrid">
+          <button type="button" class="tg" id="mc" aria-pressed="false" data-tip="Makes the synth send and receive its own Control Change messages, so moving its sliders updates this editor.">MIDI Control</button>
+          <button type="button" class="tg" id="lc" aria-pressed="false" data-tip="Connects the keys to the synth&rsquo;s own sound. Turn it off to hear only what comes in over MIDI.">Local Control</button>
+          <button type="button" class="tg" id="spk" aria-pressed="false" data-tip="Turns the built-in speakers on or off.">Speaker Output</button>
+          <button type="button" class="tg" id="apo" aria-pressed="false" data-tip="Switches the synth off by itself after 30 minutes of inactivity.">Auto Power-Off</button>
+        </div>
+        <div class="setnum" id="setNum"></div>
+        <button type="button" class="tg" id="rem" aria-pressed="false" data-tip="The synth forgets tune and transpose when it is switched off. With this on, the editor keeps the values in this browser and sends them to the synth each time it connects (they replace what the synth has). Off: nothing is stored.">Remember in this browser</button>
+        <div class="setsel">
+          <label data-tip="The MIDI channel the synth sends its keys and controls on. Off sends nothing.">MIDI transmit channel <select id="txCh"></select></label>
+          <label data-tip="The MIDI channel the synth listens on. All listens on every channel.">MIDI receive channel <select id="rxCh"></select></label>
+        </div>
+        <div class="setfoot">
+          <button type="button" id="bSys" data-tip="Reads the current settings from the synth.">Read from synth</button>
+          <small>Factory Reset can only be done on the hardware (hold the rightmost key while powering on).</small>
+        </div>
+      </div>
+      <button type="button" class="gear" id="gear" aria-label="Synth settings" aria-expanded="false" aria-controls="setPanel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+    </div>
+  </header>
+
+  <div class="editor">
+    <div class="synth" id="synth"></div>
+  </div>
+
+  <div class="box lib dropbox">
+    <h2>LIBRARY <span id="count"></span></h2>
+    <div class="tools">
+     <div class="tl">
+      <button id="bInit" title="Load a basic init sound into the editor and the synth (volume kept; library untouched)">Init</button>
+      <button id="bSave" title="Store the current sound in the selected slot">Save</button>
+      <button id="bDel" title="Empty the selected slot">Clear</button>
+      <button id="bReset" title="Put every fader back where the hardware controls sit (as last seen from the synth)">Reset</button>
+      <div class="dd">
+        <button id="bExp" aria-haspopup="true" aria-expanded="false">Export <span aria-hidden="true">&#9662;</span></button>
+        <div class="ddmenu" id="ddMenu" role="menu" hidden>
+          <button type="button" role="menuitem" id="exJson">Export library</button>
+          <button type="button" role="menuitem" id="exSyx">Export Patch (.syx)</button>
+        </div>
+      </div>
+      <button id="pgL" class="pg" aria-label="Previous page" title="Previous page"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 5 8 12 15 19"/></svg></button>
+      <span class="pgn" id="pgn">1 / 4</span>
+      <button id="pgR" class="pg" aria-label="Next page" title="Next page"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 5 16 12 9 19"/></svg></button>
+     </div>
+     <div class="morph off" id="morph">
+        <div class="mtop"><button type="button" class="mbtn" id="mBtn" title="Press, then click a patch for A and another for B. Then slide to morph between them.">MORPH</button></div>
+        <div class="mrow2">
+          <button type="button" class="mab" id="mbA" aria-label="Morph A"><small id="mnA"></small><b>A</b></button>
+          <div class="mtrack" id="mTrack" role="slider" aria-label="Morph between A and B" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="-1"><i class="mcap" id="mCap"></i></div>
+          <button type="button" class="mab" id="mbB" aria-label="Morph B"><b>B</b><small id="mnB"></small></button>
+        </div>
+      </div>
+     <div class="tr2">
+      <span class="dropHint">Drag a .json / .syx file in to import</span>
+      <button id="bRand" class="big sq" aria-label="Randomize" title="Randomize the sound (volume untouched); with several library slots selected, each one is randomized on its own"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3"/><circle cx="15.5" cy="8.5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="8.5" cy="15.5" r="1.3"/><circle cx="15.5" cy="15.5" r="1.3"/></svg></button>
+     </div>
+    </div>
+    <div class="slots" id="slots"></div>
+  </div>
+  <div class="box lib">
+    <div id="kbd"></div>
+    <div class="arp" id="arp"></div>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+var $=function(i){return document.getElementById(i)};
+function el(t,c){var e=document.createElement(t);if(c)e.className=c;return e}
+function copy(o){return JSON.parse(JSON.stringify(o))}
+
+/* Reface YC: SysEx model id 06, tone generator block 30 00 aa.
+   key, SysEx address (30 00 aa), max, CC number (MIDI Control on) */
+var MID=0x06;
+var P=[['vol',0,127,7],['wave',2,4,80],
+['f16',3,6,102],['f513',4,6,103],['f8',5,6,104],['f4',6,6,105],['f223',7,6,106],['f2',8,6,107],['f135',9,6,108],['f113',10,6,109],['f1',11,6,110],
+['vc',12,1,79],['vcD',13,4,77],['pOn',14,1,111],['pTy',15,1,112],['pL',16,4,113],['rot',17,3,19],['dist',18,127,18],['rev',19,127,91]];
+var byK={},byA={},byCC={};
+P.forEach(function(p){var o={k:p[0],a:p[1],max:p[2],cc:p[3]};byK[o.k]=o;byA[o.a]=o;byCC[o.cc]=o});
+/* the synth sends stepped controls as CC values in bands: convert a CC value to the step it means */
+var CCTH={1:[64],3:[33,65,96],4:[26,52,77,103],6:[19,37,55,74,92,110]};
+function ccStep(max,v){var t=CCTH[max];if(!t)return v;var n=0;for(var i=0;i<t.length;i++)if(v>=t[i])n++;return n}
+var INIT={vol:100,wave:0,f16:0,f513:0,f8:6,f4:0,f223:0,f2:0,f135:0,f113:0,f1:0,vc:0,vcD:0,pOn:0,pTy:0,pL:2,rot:0,dist:0,rev:0};
+var S=copy(INIT),refs={},ghosts={},GV={};
+function ghost(k,v){GV[k]=v;ghosts[k](v)}
+
+var SELS={
+ /* index = value sent to the synth */
+ wave:[['H'],['V'],['F'],['A'],['Y']],
+ rot:[['OFF'],['STOP'],['SLOW'],['FAST']],
+ vc:[['VIBRATO'],['CHORUS']],
+ pOn:[['OFF'],['ON']],
+ pTy:[['A'],['B']]};
+var LBL={vol:'VOLUME',wave:'WAVE',f16:"FOOTAGE 16'",f513:"FOOTAGE 5 1/3'",f8:"FOOTAGE 8'",f4:"FOOTAGE 4'",f223:"FOOTAGE 2 2/3'",f2:"FOOTAGE 2'",f135:"FOOTAGE 1 3/5'",f113:"FOOTAGE 1 1/3'",f1:"FOOTAGE 1'",
+ vc:'VIBRATO/CHORUS',vcD:'VIB/CHO DEPTH',pOn:'PERCUSSION',pTy:'PERC TYPE',pL:'PERC LENGTH',rot:'ROTARY',dist:'DIST',rev:'REVERB'};
+var FT=[['f16',"16'"],['f513',"5 1/3'"],['f8',"8'"],['f4',"4'"],['f223',"2 2/3'"],['f2',"2'"],['f135',"1 3/5'"],['f113',"1 1/3'"],['f1',"1'"]];
+var SEC=[
+ {t:'ROTARY SPEED',c:[{sel:'rot',l:'SPEED'}]},
+ {t:'VOLUME',c:[{k:'vol',l:'VOLUME'}]},
+ {t:'WAVE',c:[{sel:'wave',l:'WAVE',rev:true,knob:true}]},
+ {t:'FOOTAGE',c:FT.map(function(f){return {k:f[0],l:f[1],ft:true,inv:true,tone:'black'}})},
+ {t:'VIBRATO / CHORUS',c:[{rk:'vc',l:'&nbsp;',top:[0,'VIBRATO'],bot:[1,'CHORUS'],col:'#1f9d8a'},{k:'vcD',l:'DEPTH',tone:'teal'}]},
+ {t:'PERCUSSION',c:[{rk:'pOn',l:'ON / OFF',top:[1,'ON'],bot:[0,'OFF'],col:'#e03a30'},{rk:'pTy',l:'TYPE',top:[0,'A'],bot:[1,'B'],col:'#e03a30'},{k:'pL',l:'LENGTH',tone:'red'}]},
+ {t:'EFFECT',c:[{k:'dist',l:'DIST',tone:'yellow'},{k:'rev',l:'REVERB',tone:'yellow'}]}];
+var TONE={black:['#3c3c41','#0a0a0b'],teal:['#3fb09c','#12594e'],red:['#e04a40','#7a1210'],yellow:['#ffe766','#d4a008']};
+
+function wdy(e){var dy=e.deltaY;if(e.deltaMode===1)dy*=33;else if(e.deltaMode===2)dy*=300;if(e.webkitDirectionInvertedFromDevice)dy=-dy;return dy}  /* undo the system's natural-scrolling flip where the browser reports it */
+function mkSlider(k,l,o){
+  o=o||{};
+  var M=byK[k].max,inv=!!o.inv;  /* inv: footage faders, where 0 is up and 6 (loudest) is down, like drawbars */
+  var CH=o.tone?22:18,d=el('div','sl'+(o.ft?' ft':'')+(o.tone?' hwc':'')),tr=el('div','tr'),gh=el('i','cap ghost'),cap=el('i','cap'),lb=el('label');
+  if(o.tone){d.style.setProperty('--cc1',TONE[o.tone][0]);d.style.setProperty('--cc2',TONE[o.tone][1])}
+  lb.textContent=l;
+  var NT=M<=8?M:8;  /* stepped faders get one graduation line per position */
+  for(var t=0;t<=NT;t++){var tk=el('i','tk');tk.style.top='calc('+CH/2+'px + (100% - '+CH+'px) * '+(t/NT)+')';tr.appendChild(tk)}
+  tr.appendChild(gh);tr.appendChild(cap);d.appendChild(tr);d.appendChild(lb);
+  function pp(v){var r=v/M;return inv?1-r:r}  /* value -> fader position (0 = bottom) */
+  function mv(e){var r=tr.getBoundingClientRect(),t=1-(e.clientY-r.top-CH/2)/(r.height-CH);
+    t=Math.max(0,Math.min(1,t));
+    var v=Math.round((inv?1-t:t)*M);
+    if(v!==S[k])setP(k,v,true);
+  }
+  tr.addEventListener('pointerdown',function(e){pushUndo('s'+k);tr.setPointerCapture(e.pointerId);mv(e);tr.onpointermove=mv});
+  tr.addEventListener('pointerup',function(){tr.onpointermove=null});
+  tr.addEventListener('pointercancel',function(){tr.onpointermove=null});
+  tr.addEventListener('dblclick',function(){tr.onpointermove=null;if(gv!==null)setP(k,gv,true)});  /* back to where the hardware fader sits */
+  /* mouse wheel / trackpad scroll over a fader moves it (up = fader up) */
+  var wf=null,wa=0;
+  tr.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var dy=wdy(e);
+    if(M<=8){  /* stepped: one position per mouse notch, trackpads accumulate */
+      var s=0;
+      if(Math.abs(dy)>=50)s=dy<0?1:-1;
+      else{wa+=dy;if(Math.abs(wa)>=40){s=wa<0?1:-1;wa=0}}
+      if(!s)return;
+      var nv=Math.max(0,Math.min(M,S[k]+(inv?-s:s)));
+      if(nv!==S[k]){pushUndo('s'+k);setP(k,nv,true)}
+      return;
+    }
+    if(wf===null||Math.round(wf)!==S[k])wf=S[k];
+    wf=Math.max(0,Math.min(M,wf-dy*M/127*0.08));
+    var v=Math.round(wf);
+    if(v!==S[k]){pushUndo('s'+k);setP(k,v,true)}
+  },{passive:false});
+  var cur=0,gv=null;  /* editor value / last hardware value */
+  function age(){gh.classList.toggle('aged',gv!==null&&cur!==gv)}  /* shadow is revealed once the editor fader leaves the hardware position */
+  refs[k]=function(v){cur=v;cap.style.setProperty('--p',pp(v));age()};
+  ghosts[k]=function(v){gv=v;gh.style.setProperty('--p',pp(v));gh.classList.add('show');age()};
+  return d;
+}
+function mkSelector(k,l,rev,knob){
+  var w=el('div','selw'),s=el('div','sel'),lb=el('label'),btns=[],kn=null;
+  lb.textContent=l;
+  var n=SELS[k].length;for(var j=0;j<n;j++){(function(i){
+    var b=el('button','opt');b.type='button';b.dataset.i=i;b.style.setProperty('--c','var(--c5)');
+    b.innerHTML='<span class="led"></span><b>'+SELS[k][i][0]+'</b>';
+    b.onclick=function(){pushUndo('o'+k);setP(k,i,true)};btns.push(b);s.appendChild(b);
+  })(rev?j:n-1-j)}
+  var ang=[-55,-33,0,33,55];  /* the knob pointer sweeps from H (top) to Y (bottom) */
+  if(knob){
+    kn=el('div','knob');kn.appendChild(el('i'));kn.title='Click to step through the waves, or scroll';
+    kn.onclick=function(){pushUndo('o'+k);setP(k,(S[k]+1)%n,true)};
+    var ka=0;
+    kn.addEventListener('wheel',function(e){
+      e.preventDefault();
+      var dy=wdy(e),st=0;
+      if(Math.abs(dy)>=50)st=dy>0?1:-1;
+      else{ka+=dy;if(Math.abs(ka)>=40){st=ka>0?1:-1;ka=0}}
+      var v=Math.max(0,Math.min(n-1,S[k]+st));
+      if(st&&v!==S[k]){pushUndo('o'+k);setP(k,v,true)}
+    },{passive:false});
+    var row=el('div','krow');row.appendChild(kn);row.appendChild(s);w.appendChild(row);
+  }else w.appendChild(s);
+  w.appendChild(lb);
+  refs[k]=function(v){btns.forEach(function(b){b.classList.toggle('on',+b.dataset.i===v)});if(kn)kn.style.transform='rotate('+ang[v]+'deg)'};
+  ghosts[k]=function(v){btns.forEach(function(b){b.classList.toggle('hw',+b.dataset.i===v)})};
+  return w;
+}
+/* two-position rocker: top and bottom are [value,label] */
+function mkRocker(k,l,top,bot,col){
+  var w=el('div','selw'),r=el('div','rk'),lb=el('label'),btns=[];
+  lb.innerHTML=l;r.style.setProperty('--c',col);
+  r.setAttribute('role','switch');r.tabIndex=0;
+  ['lit t','lit b','gl t','gl b'].forEach(function(c){r.appendChild(el('i',c))});
+  [top,bot].forEach(function(o){
+    var b=el('span');b.dataset.i=o[0];b.textContent=o[1];btns.push(b);r.appendChild(b);
+  });
+  function flip(){pushUndo('o'+k);setP(k,S[k]===top[0]?bot[0]:top[0],true)}  /* a single button: a click anywhere flips it */
+  r.onclick=flip;
+  r.onkeydown=function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();flip()}};
+  w.appendChild(r);w.appendChild(lb);
+  refs[k]=function(v){
+    r.classList.toggle('bot',v===bot[0]);r.setAttribute('aria-checked',v===top[0]?'true':'false');
+    btns.forEach(function(b){b.classList.toggle('on',+b.dataset.i===v)});
+  };
+  ghosts[k]=function(v){btns.forEach(function(b){b.classList.toggle('hw',+b.dataset.i===v)})};
+  return w;
+}
+var synth=$('synth');
+SEC.forEach(function(sec){
+  var b=el('div','sec'),h=el('h2'),c=el('div','ctl');h.textContent=sec.t;b.appendChild(h);b.appendChild(c);
+  sec.c.forEach(function(x){c.appendChild(x.sel?mkSelector(x.sel,x.l,x.rev,x.knob):x.rk?mkRocker(x.rk,x.l,x.top,x.bot,x.col):mkSlider(x.k,x.l,x))});
+  synth.appendChild(b);
+});
+
+var curName='INIT PATCH',lcdT=null,quiet=false;
+function lcdSet(t,param){$('lcdMain').textContent=t;$('lcdBox').classList.toggle('param',!!param)}
+function showName(t){clearTimeout(lcdT);curName=t;lcdSet(t,false)}
+function showMsg(t){clearTimeout(lcdT);lcdSet(t,false);lcdT=setTimeout(function(){lcdSet(curName,false)},4000)}
+function showParam(t){clearTimeout(lcdT);lcdSet(t,true);lcdT=setTimeout(function(){lcdSet(curName,false)},6000)}  /* back to the patch name after 6 s without parameter changes */
+function lcd(k,v){
+  var val=SELS[k]?SELS[k][v][0]:v;
+  if(!quiet)showParam(LBL[k]+' '+val);
+}
+function setP(k,v,send){
+  v=Math.max(0,Math.min(byK[k].max,v|0));S[k]=v;refs[k](v);lcd(k,v);if(send)sendP(k);
+}
+function applyAll(p,send){
+  quiet=true;
+  P.forEach(function(x){var k=x[0];setP(k,p[k]===undefined?INIT[k]:p[k],false)});
+  quiet=false;
+  if(send)sendAll();
+}
+
+/* ---------- MIDI ---------- */
+var acc=null,inP=null,outP=null,HDR=[0xF0,0x43,0x10,0x7F,0x1C,MID,0x30,0x00];
+function pc(k){return HDR.concat([byK[k].a,S[k],0xF7])}
+function sendP(k){
+  if(!outP)return;
+  try{outP.send(pc(k));
+    if(k==='vol')outP.send([0xB0|(rxCh>15?0:rxCh),7,S.vol]);  /* volume also as CC7, which the synth always accepts */
+  }catch(e){}
+}
+function sendAll(){if(!outP)return;P.forEach(function(x,i){setTimeout(function(){sendP(x[0])},i*10)})}
+function getDump(){if(outP)try{outP.send([0xF0,0x43,0x20,0x7F,0x1C,MID,0x0E,0x0F,0x00,0xF7])}catch(e){}}
+
+/* ---------- Synth settings (System block, address 00 00 xx) ----------
+   00 = transmit channel (7F = off)   01 = receive channel (10 = all)
+   06 = Local Control   0C = Auto Power-Off   0D = Speaker Output   0E = MIDI Control */
+var rxCh=16,capture=false,getSync=false,autoSys=false,txs=$('txCh'),rxs=$('rxCh');
+txs.add(new Option('Off',127));rxs.add(new Option('All',16));
+for(var ch=0;ch<16;ch++){txs.add(new Option('Ch '+(ch+1),ch));rxs.add(new Option('Ch '+(ch+1),ch))}
+function sysSend(a,v){if(outP)try{outP.send([0xF0,0x43,0x10,0x7F,0x1C,MID,0x00,0x00,a,v,0xF7])}catch(e){}}
+function getSys(){if(outP)try{outP.send([0xF0,0x43,0x20,0x7F,0x1C,MID,0x00,0x00,0x00,0xF7])}catch(e){}}
+/* number settings in the System block: Master Tune (02-05, 4 nibbles, 0x400 = 0 cents, 0.1 cent steps), Master Transpose (07, 0x40 = 0).
+   Values are kept as integers: tune in tenths of a cent, transpose in semitones. */
+var SYSN=[
+ {k:'tune',a:2,l:'Master tune',u:'cents',min:-1024,max:1023,def:0,sc:10,st:10,fine:1,tip:'Fine-tunes the whole synth in cents (hundredths of a semitone), from -102.4 to +102.3. 0 is standard A = 440 Hz. Shift-click the arrows for 0.1-cent steps. Double-click the number to reset it to 0.'},
+ {k:'tp',a:7,l:'Transpose',u:'semitones',min:-12,max:12,def:0,sc:1,st:1,tip:'Shifts what the keyboard plays up or down, in semitones (-12 to +12). Double-click the number to reset it to 0.'}];
+var SV={},numUI={},byNK={};
+SYSN.forEach(function(c){SV[c.k]=c.def;byNK[c.k]=c});
+/* the synth forgets these when it is powered off, so the values set from this editor are remembered in the browser and sent again on every connect */
+var REM=false,SAVED={};  /* remembering is opt-in (the Remember toggle in the settings menu) */
+try{REM=localStorage.getItem('ryc_rem')==='1'}catch(e){}
+if(REM){try{SAVED=JSON.parse(localStorage.getItem('ryc_sys'))||{}}catch(e){SAVED={}}}
+else{try{localStorage.removeItem('ryc_sys')}catch(e){}}
+function saveSys(){try{localStorage.setItem('ryc_sys',JSON.stringify(SAVED))}catch(e){}}
+function savedVal(c){if(!REM)return null;var s=SAVED[c.k];if(s===undefined||s===null||!isFinite(+s))return null;return Math.max(c.min,Math.min(c.max,Math.round(+s)))}
+function numTxt(c,v){return c.sc>1?(v/c.sc).toFixed(1):String(v)}
+function tuneHz(v){return (440*Math.pow(2,v/10/1200)).toFixed(1)}
+function tuneRaw(n2,n3,n4){return ((n2&7)<<8)|((n3&15)<<4)|(n4&15)}
+function sysSendN(a,arr){if(outP)try{outP.send([0xF0,0x43,0x10,0x7F,0x1C,MID,0x00,0x00,a].concat(arr,[0xF7]))}catch(e){}}
+function sendNum(k){
+  var v=SV[k];
+  if(k==='tune'){var r=1024+v;sysSendN(2,[0,(r>>8)&7,(r>>4)&15,r&15])}
+  else sysSendN(byNK[k].a,[64+v]);
+}
+function setNum(k,v,send){
+  var c=byNK[k];v=Math.max(c.min,Math.min(c.max,Math.round(v)));SV[k]=v;
+  if(numUI[k])numUI[k](v);
+  if(send){sendNum(k);if(REM){SAVED[k]=SV[k];saveSys()}}
+}
+var TGA={6:'lc',12:'apo',13:'spk',14:'mc'};
+function setTog(id,on){var b=$(id);b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')}
+function sysParam(a,v){
+  if(a===0)txs.value=v;
+  else if(a===1){rxCh=v;rxs.value=v}
+  else if(a===7)setNum('tp',v-64,false);
+  else if(TGA[a])setTog(TGA[a],!!v);
+}
+txs.onchange=function(){sysSend(0,+txs.value)};
+rxs.onchange=function(){rxCh=+rxs.value;sysSend(1,rxCh)};
+[['mc',0x0E],['lc',6],['spk',0x0D],['apo',0x0C]].forEach(function(t){
+  $(t[0]).onclick=function(){
+    var on=this.getAttribute('aria-pressed')!=='true';
+    setTog(t[0],on);sysSend(t[1],on?1:0);
+  };
+});
+$('bSys').onclick=getSys;
+
+/* settings menu open / close */
+var gear=$('gear'),spanel=$('setPanel');
+function setOpen(o){
+  spanel.hidden=!o;gear.setAttribute('aria-expanded',o?'true':'false');gear.classList.toggle('on',o);
+  if(!o)hideTip();
+}
+gear.onclick=function(){setOpen(spanel.hidden)};
+$('setClose').onclick=function(){setOpen(false);gear.focus()};
+document.addEventListener('pointerdown',function(e){if(!spanel.hidden&&!$('setWrap').contains(e.target))setOpen(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!spanel.hidden)setOpen(false)});
+
+/* version / about popover */
+var verB=$('ver'),about=$('about');
+function aboutOpen(o){about.hidden=!o;verB.setAttribute('aria-expanded',o?'true':'false');verB.classList.toggle('on',o)}
+verB.onclick=function(e){e.stopPropagation();aboutOpen(about.hidden)};
+document.addEventListener('click',function(e){if(!about.hidden&&!about.contains(e.target))aboutOpen(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')aboutOpen(false)});
+
+/* number rows in the settings menu: arrows (hold to repeat), scroll over the row, or click the number and type */
+(function(){
+  var box=$('setNum');
+  SYSN.forEach(function(c){
+    var row=el('div','numrow'),nl=el('div','nl'),t=el('span'),sub=el('small'),
+        bd=el('button'),bu=el('button'),inp=el('input');
+    var sv0=savedVal(c);if(sv0!==null)SV[c.k]=sv0;
+    row.setAttribute('data-tip',c.tip);
+    t.textContent=c.l;nl.appendChild(t);nl.appendChild(sub);
+    bd.type=bu.type='button';bd.textContent='\u25BE';bu.textContent='\u25B4';
+    bd.setAttribute('aria-label',c.l+' down');bu.setAttribute('aria-label',c.l+' up');
+    inp.type='number';inp.min=c.min/c.sc;inp.max=c.max/c.sc;inp.step=1/c.sc;inp.setAttribute('aria-label',c.l);
+    numUI[c.k]=function(v){
+      sub.textContent=c.k==='tune'?'cents \u00b7 '+tuneHz(v)+' Hz':c.u;
+      if(document.activeElement!==inp)inp.value=numTxt(c,v);  /* never overwrite what is being typed */
+    };
+    function bump(d){setNum(c.k,SV[c.k]+d,true)}
+    function hold(b,dir){
+      var T=null,I=null;
+      function stop(){clearTimeout(T);clearInterval(I);T=I=null}
+      b.addEventListener('pointerdown',function(e){
+        if(e.button!==0)return;
+        e.preventDefault();stop();b.setPointerCapture(e.pointerId);
+        var d=dir*((e.shiftKey&&c.fine)||c.st),rep=0;
+        bump(d);
+        T=setTimeout(function(){I=setInterval(function(){rep++;bump(d*(c.sc>1&&rep>12&&!e.shiftKey?5:1))},70)},420);  /* hold: repeats, tune speeds up after a while */
+      });
+      ['pointerup','pointercancel','lostpointercapture'].forEach(function(n){b.addEventListener(n,stop)});
+      b.addEventListener('click',function(e){if(e.detail===0)bump(dir*c.st)});  /* keyboard: Enter / Space */
+    }
+    hold(bd,-1);hold(bu,1);
+    inp.oninput=function(){
+      var f=parseFloat(inp.value);if(!isFinite(f))return;
+      var u=Math.round(f*c.sc);if(u>=c.min&&u<=c.max)setNum(c.k,u,true);
+    };
+    inp.onblur=function(){inp.value=numTxt(c,SV[c.k])};
+    inp.onfocus=function(){inp.select()};
+    inp.onkeydown=function(e){if(e.key==='Enter')inp.blur()};
+    function rst(){setNum(c.k,c.def,true);inp.value=numTxt(c,c.def);inp.select()}  /* double-click the number (or its label): back to the default */
+    inp.ondblclick=rst;nl.ondblclick=rst;
+    var wacc=0;  /* scroll up = higher; one step per mouse notch, trackpads accumulate */
+    row.addEventListener('wheel',function(e){
+      e.preventDefault();
+      var dy=wdy(e);
+      var s=0;
+      if(Math.abs(dy)>=50)s=dy<0?1:-1;
+      else{wacc+=dy;if(Math.abs(wacc)>=40){s=wacc<0?1:-1;wacc=0}}
+      if(s)bump(s*c.st);
+    },{passive:false});
+    row.appendChild(nl);row.appendChild(bd);row.appendChild(inp);row.appendChild(bu);box.appendChild(row);
+    numUI[c.k](SV[c.k]);
+  });
+})();
+
+/* Remember toggle: on = store the values in this browser and send them on every connect; off = store nothing */
+setTog('rem',REM);
+$('rem').onclick=function(){
+  REM=this.getAttribute('aria-pressed')!=='true';
+  setTog('rem',REM);
+  try{localStorage.setItem('ryc_rem',REM?'1':'0')}catch(e){}
+  SAVED={};
+  if(REM){SYSN.forEach(function(c){SAVED[c.k]=SV[c.k]});saveSys()}  /* starts from what is showing now */
+  else{try{localStorage.removeItem('ryc_sys')}catch(e){}}
+};
+
+/* hover card: appears after the pointer rests on an item for 2 seconds */
+var tip=el('div','tip'),tipT=null;tip.hidden=true;tip.setAttribute('role','tooltip');document.body.appendChild(tip);
+function hideTip(){clearTimeout(tipT);tipT=null;tip.hidden=true}
+function showTip(t){
+  tip.textContent=t.getAttribute('data-tip');tip.hidden=false;
+  var r=t.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight,
+      x=Math.max(8,Math.min(window.innerWidth-w-8,r.left+r.width/2-w/2)),y=r.top-h-8;
+  if(y<8)y=r.bottom+8;
+  tip.style.left=x+'px';tip.style.top=y+'px';
+}
+[].forEach.call(spanel.querySelectorAll('[data-tip]'),function(t){
+  t.addEventListener('pointerenter',function(e){
+    if(e.pointerType==='touch')return;
+    hideTip();tipT=setTimeout(function(){showTip(t)},2000);
+  });
+  t.addEventListener('pointerleave',hideTip);
+  t.addEventListener('pointerdown',hideTip);
+});
+
+var monN=0;
+function mon(d){
+  if(d[0]>=0xF8)return;  /* ignore active sensing / clock */
+  monN++;
+  var h=[].slice.call(d,0,4).map(function(b){return ('0'+b.toString(16)).slice(-2).toUpperCase()}).join(' ');
+  $('mon').textContent='IN #'+monN+': '+h+(d.length>4?' \u2026('+d.length+' bytes)':'');
+}
+function handle(m){
+  var d=m.data;
+  mon(d);
+  if(d[0]===0xF0){
+    if(d[1]!==0x43||d[3]!==0x7F||d[4]!==0x1C)return;
+    var t=d[2]&0xF0;
+    if(t===0x10&&d[5]===MID&&d[6]===0x30&&d[7]===0){var p=byA[d[8]];if(p)setP(p.k,d[9],false)}
+    else if(t===0x10&&d[5]===MID&&d[6]===0&&d[7]===0){if(d[8]===2)setNum('tune',tuneRaw(d[10],d[11],d[12])-1024,false);else sysParam(d[8],d[9])}
+    else if(t===0&&d[7]===MID&&d[8]===0&&d[9]===0&&d[10]===0){
+      [0,1,6,7,0x0C,0x0D,0x0E].forEach(function(a){if(11+a<d.length)sysParam(a,d[11+a])});
+      if(d.length>16)setNum('tune',tuneRaw(d[14],d[15],d[16])-1024,false);
+      if(autoSys){  /* right after connecting: transmit channel 1 only if Off, MIDI Control and Local Control on */
+        autoSys=false;
+        var fix=[];
+        if(+txs.value===127)fix.push([0,0]);
+        if($('mc').getAttribute('aria-pressed')!=='true')fix.push([0x0E,1]);
+        if($('lc').getAttribute('aria-pressed')!=='true')fix.push([6,1]);
+        /* one message at a time, then read the synth back so the editor shows what the synth really has */
+        fix.forEach(function(f,i){setTimeout(function(){sysSend(f[0],f[1])},120*(i+1))});
+        if(fix.length)setTimeout(getSys,120*(fix.length+2));
+        /* send the remembered tune / transpose if the synth came up with different values, then read back */
+        var rest=SYSN.filter(function(c){var sv=savedVal(c);return sv!==null&&sv!==SV[c.k]}),base=120*(fix.length+3);
+        rest.forEach(function(c,i){setTimeout(function(){setNum(c.k,savedVal(c),true)},base+120*i)});
+        if(rest.length)setTimeout(getSys,base+120*rest.length+150);
+      }
+    }
+    else if(t===0&&d[7]===MID&&d[8]===0x30&&d[9]===0&&d[10]===0){
+      for(var a=0;a<=0x13;a++){var q=byA[a];if(q&&11+a<d.length)setP(q.k,d[11+a],false)}
+      showMsg('PATCH RECEIVED');
+      if(capture){capture=false;P.forEach(function(x){if(x[0]!=='vol')ghost(x[0],S[x[0]])})}  /* first read after connecting = where the hardware controls sit */
+      if(getSync){  /* faders return to where the hardware controls physically are */
+        getSync=false;var any=false;
+        P.forEach(function(x){var k=x[0];if(GV[k]!==undefined&&GV[k]!==S[k]){setP(k,GV[k],false);any=true}});
+        if(any)sendAll();
+        showMsg('PATCH RECEIVED');
+      }
+    }
+  }else if((d[0]&0xF0)===0xB0){
+    var c=byCC[d[1]];
+    if(c){var v=ccStep(c.max,d[2]);setP(c.k,v,false);ghost(c.k,v)}
+    else if(d[1]===123||d[1]===120){held={};drawKeys()}
+  }else if((d[0]&0xF0)===0x90||(d[0]&0xF0)===0x80){
+    var non=(d[0]&0xF0)===0x90&&d[2]>0;
+    if(AR.on)arpNote(d[1],non,d[2]);
+    note(d[1],non,d[2]);
+  }
+}
+var YCRE=/reface\s*yc/i,ycInit=false,autoT=null,userPick=false;
+function isYC(p){return !!p&&YCRE.test(p.name)}
+function pick(s,prev){
+  var o=[].slice.call(s.options),i=-1;
+  if(!userPick)i=o.findIndex(function(x){return YCRE.test(x.text)});  /* a Reface YC wins, unless a port was chosen by hand */
+  if(i<0)i=o.findIndex(function(x){return x.value===prev});
+  if(i<0)i=o.findIndex(function(x){return /reface/i.test(x.text)});
+  if(i>=0)s.selectedIndex=i;
+}
+function bind(first){
+  if(inP)inP.onmidimessage=null;
+  inP=acc.inputs.get($('inSel').value)||null;outP=acc.outputs.get($('outSel').value)||null;
+  if(inP&&inP.state==='disconnected')inP=null;
+  if(outP&&outP.state==='disconnected')outP=null;
+  if(inP)inP.onmidimessage=handle;
+  $('dot').className='dot'+(outP?' ok':'');
+  ycInit=isYC(outP)&&(first||ycInit);  /* true once this Reface YC has been read */
+  if(first&&outP){capture=true;autoSys=true;getDump();setTimeout(getSys,250)}
+}
+function refresh(first){
+  var iS=$('inSel'),oS=$('outSel'),pi=iS.value,po=oS.value;
+  iS.innerHTML='';oS.innerHTML='';
+  acc.inputs.forEach(function(p){iS.add(new Option(p.name,p.id))});
+  acc.outputs.forEach(function(p){oS.add(new Option(p.name,p.id))});
+  pick(iS,pi);pick(oS,po);
+  var yc=oS.selectedIndex>=0&&YCRE.test(oS.options[oS.selectedIndex].text);
+  if(first||!yc||ycInit)bind(first);
+  else{  /* a Reface YC is there and has not been read yet (page just loaded with it plugged in, or it was just plugged in): read it once it has had a moment to wake up */
+    bind(false);clearTimeout(autoT);
+    autoT=setTimeout(function(){if(acc&&!ycInit)bind(true)},700);
+  }
+}
+function connect(auto){
+  if(!navigator.requestMIDIAccess){if(!auto)showMsg('NO WEBMIDI');return}
+  if(!auto)userPick=false;
+  navigator.requestMIDIAccess({sysex:true}).then(function(a){
+    acc=a;a.onstatechange=function(){refresh(false)};refresh(!auto);
+  },function(){if(!auto)showMsg('MIDI BLOCKED')});
+}
+$('conn').onclick=function(){connect(false)};
+$('inSel').onchange=$('outSel').onchange=function(){userPick=true;if(acc)bind(true)};
+
+/* ---------- Library ---------- */
+var LIB=load(),sel=0,dragFrom=-1,page=0,PG=32,ms={},anc=0,dragSet=null,overEls=[];  /* ms: extra selected slots (Shift), anc: where a Shift range starts */  /* 128 slots, shown 32 per page */
+var mSel=null,mSeq=false,pa=null,mA=null,mB=null,mT=0,mAnim=0;  /* morph: patch being picked ('A' / 'B' / none), true when picking A then B from MORPH, pending A, A, B, slider position */
+/* undo / redo (Ctrl or Cmd + Z, add Shift to redo): snapshots of the sound and the library */
+var undoS=[],redoS=[],lastTag=null,lastT=0;
+function snap(){return{S:copy(S),L:JSON.stringify(LIB),sel:sel}}
+function pushUndo(tag){
+  var now=Date.now();
+  if(tag&&tag===lastTag&&now-lastT<600){lastT=now;return}  /* one entry per drag / click burst */
+  lastTag=tag||null;lastT=now;undoS.push(snap());if(undoS.length>100)undoS.shift();redoS.length=0;
+}
+function restoreSnap(x){
+  LIB=JSON.parse(x.L);sel=x.sel;ms={};anc=sel;page=Math.floor(sel/PG);persist();applyAll(x.S,true);slots();
+  showName(LIB[sel]?LIB[sel].n.toUpperCase():curName);
+}
+function stepHistory(from,to){if(!from.length)return;to.push(snap());restoreSnap(from.pop());lastTag=null}
+document.addEventListener('keydown',function(e){
+  if(!(e.ctrlKey||e.metaKey)||e.altKey||String(e.key).toLowerCase()!=='z')return;
+  var t=e.target;if(t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable))return;
+  e.preventDefault();
+  if(e.shiftKey)stepHistory(redoS,undoS);else stepHistory(undoS,redoS);
+});
+function load(){try{var x=JSON.parse(localStorage.getItem('ryc_lib'));if(Array.isArray(x)&&(x.length===32||x.length===128)){while(x.length<128)x.push(null);return x}}catch(e){}return Array(128).fill(null)}
+function persist(){try{localStorage.setItem('ryc_lib',JSON.stringify(LIB))}catch(e){}}
+/* drag a patch onto slot b: an empty slot just receives it (nothing else moves), a filled one swaps places with it */
+function moveSlot(a,b){
+  if(a<0||a===b)return;
+  pushUndo();
+  var tmp=LIB[a];LIB[a]=LIB[b];LIB[b]=tmp;
+  ms={};if(sel===a)sel=b;else if(sel===b)sel=a;  /* the selection follows its patch */
+  persist();slots();
+}
+/* copy the patch in slot a into slot b (replaces whatever was there) */
+function dupSlot(a,b){
+  if(a<0||a===b||!LIB[a])return;
+  pushUndo();
+  LIB[b]=copy(LIB[a]);ms={};sel=anc=b;persist();slots();
+}
+/* the library as a grid: row / column of a slot as laid out on screen (pages stack, so rows keep counting across pages) */
+function gridPos(i){var c=slotCols(),rpp=Math.ceil(PG/c),p=Math.floor(i/PG),k=i-p*PG;return{r:p*rpp+Math.floor(k/c),c:k%c}}
+function gridAt(r,col){var c=slotCols(),rpp=Math.ceil(PG/c),p=Math.floor(r/rpp),k=(r-p*rpp)*c+col;if(r<0||col<0||col>=c||k>=PG)return-1;var i=p*PG+k;return i<LIB.length?i:-1}
+/* every slot inside the rectangle spanned by two slots, as {index:true} */
+function rectSet(a,b){
+  var A=gridPos(a),B=gridPos(b),o={};
+  for(var r=Math.min(A.r,B.r);r<=Math.max(A.r,B.r);r++)for(var k=Math.min(A.c,B.c);k<=Math.max(A.c,B.c);k++){var x=gridAt(r,k);if(x>=0)o[x]=true}
+  return o;
+}
+/* the whole selection as {index:true}, always including the active slot */
+function selSet(){var o={};for(var k in ms)if(ms[k])o[k]=true;o[sel]=true;return o}
+/* Ctrl/Cmd+click adds or removes one slot without touching the others; Ctrl/Cmd+Shift+click adds the range from the last click */
+function toggleSel(i,range){
+  var set=selSet();
+  if(range){var rs=rectSet(anc,i);for(var j in rs)set[j]=true;sel=i}
+  else if(set[i]){
+    if(Object.keys(set).length<2)return;  /* keep at least one slot selected */
+    delete set[i];
+    if(sel===i){var r=Object.keys(set).map(Number);sel=r[r.length-1]}
+  }else{set[i]=true;sel=i}
+  ms=set;anc=i;markSel();showMsg(Object.keys(set).length+' SELECTED');
+}
+/* where a dragged selection would land if dropped on slot i, or null when it doesn't fit */
+function dropTargets(i){
+  var l=Object.keys(dragSet).map(Number).filter(function(j){return LIB[j]}).sort(function(x,y){return x-y}),off=i-dragFrom,T=l.map(function(j){return j+off});
+  if(T[0]<0||T[T.length-1]>=LIB.length)return null;
+  return{l:l,T:T,off:off};
+}
+/* live preview while dragging: the target slots light up and show the names of the patches that would land there */
+function clearOver(){
+  overEls.forEach(function(x){x.c.className=x.cn;if(x.st===null)x.c.removeAttribute('style');else x.c.setAttribute('style',x.st);x.sp.textContent=x.tx});
+  overEls=[];
+}
+function paintOver(tg){
+  clearOver();if(!tg.off)return;
+  var box=$('slots');
+  tg.T.forEach(function(t,k){
+    var c=box.children[t-page*PG];if(!c||t<page*PG||t>=page*PG+PG)return;
+    var sp=c.querySelector('span'),p=LIB[tg.l[k]];if(!sp)return;
+    overEls.push({c:c,sp:sp,cn:c.className,st:c.getAttribute('style'),tx:sp.textContent});
+    c.classList.remove('empty','col');c.classList.add('over');
+    if(p.c){c.classList.add('col');c.style.setProperty('--sc',p.c)}else c.style.removeProperty('--sc');
+    sp.textContent=p.n;
+  });
+}
+/* the drag picture: all selected patches laid out like on the grid, with the grabbed one under the pointer */
+function dragGhost(e,d,a){
+  if(!e.dataTransfer.setDragImage)return;
+  var l=Object.keys(dragSet).map(Number).filter(function(j){return LIB[j]}),P=l.map(gridPos),
+      r0=Math.min.apply(0,P.map(function(p){return p.r})),c0=Math.min.apply(0,P.map(function(p){return p.c})),
+      r1=Math.max.apply(0,P.map(function(p){return p.r})),c1=Math.max.apply(0,P.map(function(p){return p.c})),
+      rc=d.getBoundingClientRect(),w=rc.width,h=rc.height,gap=parseFloat(getComputedStyle($('slots')).columnGap)||6,
+      g=el('div'),A=gridPos(a);
+  g.style.cssText='position:fixed;left:-3000px;top:0;pointer-events:none;width:'+((c1-c0+1)*(w+gap)-gap)+'px;height:'+((r1-r0+1)*(h+gap)-gap)+'px';
+  l.forEach(function(j,k){
+    var s=LIB[j],q=el('div','slot'+(s.c?' col':'')+(j===a?' on':' ms')),b=el('b'),sp=el('span');
+    if(s.c)q.style.setProperty('--sc',s.c);
+    q.style.cssText+=';position:absolute;left:'+((P[k].c-c0)*(w+gap))+'px;top:'+((P[k].r-r0)*(h+gap))+'px;width:'+w+'px;height:'+h+'px;box-sizing:border-box';
+    b.textContent=j+1;sp.textContent=s.n;q.appendChild(b);q.appendChild(sp);g.appendChild(q);
+  });
+  document.body.appendChild(g);
+  e.dataTransfer.setDragImage(g,(A.c-c0)*(w+gap)+e.clientX-rc.left,(A.r-r0)*(h+gap)+e.clientY-rc.top);
+  setTimeout(function(){g.remove()},0);
+}
+/* drop a multi-selection: every patch keeps its distance from the dragged one. l = filled selected slots (sorted), a = the slot that was grabbed, off = drop slot minus a.
+   Move: patches already sitting on the targets go to the slots the batch left behind. Alt/Option: copies replace whatever is on the targets. */
+function batchDrop(l,a,off,dup){
+  if(!off)return;
+  var T=l.map(function(j){return j+off});
+  if(T[0]<0||T[T.length-1]>=LIB.length){showMsg("DOESN'T FIT");return}
+  pushUndo();
+  var old=LIB.slice(),inM={},inT={};
+  l.forEach(function(j){inM[j]=1});T.forEach(function(t){inT[t]=1});
+  if(dup){l.forEach(function(j,k){LIB[T[k]]=copy(old[j])})}
+  else{
+    var disp=T.filter(function(t){return!inM[t]}),vac=l.filter(function(j){return!inT[j]});
+    l.forEach(function(j,k){LIB[T[k]]=old[j]});
+    disp.forEach(function(t,k){LIB[vac[k]]=old[t]});
+  }
+  var o={};T.forEach(function(t){o[t]=true});
+  var k=l.indexOf(a);sel=anc=k>=0?T[k]:T[T.length-1];ms=o;
+  persist();slots();showMsg((dup?'COPIED ':'MOVED ')+l.length);
+}
+function endDrag(){
+  clearOver();dragFrom=-1;dragSet=null;document.body.classList.remove('sorting');
+  var box=$('slots');box.classList.remove('sorting');
+  [].forEach.call(box.children,function(c){c.classList.remove('drag','over')});
+}
+function markSel(){[].forEach.call($('slots').children,function(c,j){var x=j+page*PG;c.classList.toggle('on',x===sel);c.classList.toggle('ms',!!ms[x]&&x!==sel)});updLine()}
+/* double-click a patch to rename it: Enter or clicking away saves, Esc cancels */
+function rename(i,d){
+  var s=LIB[i],sp=d.querySelector('span');
+  if(!sp)return;
+  var inp=el('input','rn');inp.type='text';inp.value=s?s.n:'';inp.placeholder='Name';inp.maxLength=24;
+  d.draggable=false;d.replaceChild(inp,sp);inp.focus();inp.select();
+  var done=false;
+  function fin(ok){
+    if(done)return;done=true;
+    var v=inp.value.trim();
+    if(ok&&v){
+      pushUndo();
+      if(LIB[i])LIB[i].n=v;else LIB[i]={n:v,p:copy(S)};  /* naming an empty slot stores the current sound there */
+      persist();if(i===sel)showName(v.toUpperCase());
+    }
+    slots();
+  }
+  inp.onkeydown=function(e){e.stopPropagation();if(e.key==='Enter')fin(true);else if(e.key==='Escape')fin(false)};
+  inp.onblur=function(){fin(true)};
+  inp.onclick=inp.ondblclick=function(e){e.stopPropagation()};
+}
+function slotTip(s){return [s.a?'by '+s.a:'',s.d||''].filter(Boolean).join('\n')}
+function slots(){
+  hideTip();overEls=[];
+  var box=$('slots'),n=0;box.innerHTML='';
+  LIB.slice(page*PG,page*PG+PG).forEach(function(s,j){
+    var i=page*PG+j;
+    var d=el('div','slot'+(s?'':' empty')+(i===sel?' on':'')+(ms[i]&&i!==sel?' ms':'')+(s&&s.c?' col':'')),b=el('b'),sp=el('span');
+    if(s&&s.c)d.style.setProperty('--sc',s.c);
+    if(s&&(s.a||s.d)){  /* author + description card after the pointer rests on the patch for 2 s */
+      d.setAttribute('data-tip',slotTip(s));
+      d.addEventListener('pointerenter',function(e){if(e.pointerType==='touch'||dragFrom>=0)return;hideTip();tipT=setTimeout(function(){showTip(d)},2000)});
+      d.addEventListener('pointerleave',hideTip);d.addEventListener('pointerdown',hideTip);d.addEventListener('dragstart',hideTip);
+    }
+    d.oncontextmenu=function(e){if(!LIB[i])return;e.preventDefault();openPal(i,e.clientX,e.clientY)};
+    b.textContent=i+1;sp.textContent=s?s.n:'empty';
+    d.appendChild(b);d.appendChild(sp);d.appendChild(el('em','mb'));
+    d.onclick=function(e){
+      if(mSel&&!LIB[i])return;  /* while picking A / B only filled slots count */
+      if(mSel==='B'){morphPick(LIB[i]);return}  /* B is only assigned: the sound stays as it is */
+      if(e&&(e.metaKey||e.ctrlKey)&&!mSel){toggleSel(i,e.shiftKey);return}  /* Ctrl/Cmd+click: pick slots one by one */
+      if(e&&e.shiftKey&&!mSel){goTo(i,true);return}  /* Shift+click: select the range from the last plain click */
+      if(LIB[i])pushUndo();ms={};anc=i;sel=i;markSel();if(LIB[i]){applyAll(LIB[i].p,true);showName(LIB[i].n.toUpperCase())}
+      if(mSel==='A')morphPick(LIB[i]);
+    };
+    d.ondblclick=function(){rename(i,d)};
+    if(s){
+      d.draggable=true;
+      d.addEventListener('dragstart',function(e){
+        dragFrom=i;var st=selSet();dragSet=(st[i]&&Object.keys(st).filter(function(k){return LIB[k]}).length>1)?st:null;  /* grabbing a selected patch drags the whole selection */
+        e.dataTransfer.effectAllowed='copyMove';
+        try{e.dataTransfer.setData('application/x-reface-slot',String(i))}catch(x){}
+        if(dragSet)dragGhost(e,d,i);
+        setTimeout(function(){[].forEach.call(box.children,function(c,j){if(dragSet?dragSet[j+page*PG]:c===d)c.classList.add('drag')});box.classList.add('sorting');document.body.classList.add('sorting')},0);
+      });
+      d.addEventListener('dragend',endDrag);
+    }
+    d.addEventListener('dragover',function(e){
+      if(dragFrom<0)return;
+      if(dragSet){  /* a selection is being dragged: preview all its landing slots, refuse the drop when it would run off the library */
+        var tg=dropTargets(i);
+        if(!tg){clearOver();e.dataTransfer.dropEffect='none';return}
+        e.preventDefault();e.dataTransfer.dropEffect=e.altKey?'copy':'move';paintOver(tg);return;
+      }
+      e.preventDefault();e.dataTransfer.dropEffect=e.altKey?'copy':'move';d.classList.add('over');
+    });
+    d.addEventListener('dragleave',function(){d.classList.remove('over');if(dragSet)clearOver()});
+    d.addEventListener('drop',function(e){
+      if(dragFrom<0)return;
+      e.preventDefault();
+      var a=dragFrom,dup=e.altKey,set=dragSet;endDrag();
+      var l=set?Object.keys(set).map(Number).filter(function(j){return LIB[j]}).sort(function(x,y){return x-y}):[];
+      if(l.length>1){batchDrop(l,a,i-a,dup);return}  /* several patches selected: move / copy them together */
+      if(dup)dupSlot(a,i);else moveSlot(a,i);  /* Option (Mac) / Alt (Windows) held = duplicate */
+    });
+    box.appendChild(d);
+  });
+  n=LIB.filter(Boolean).length;
+  var np=LIB.length/PG;
+  $('count').textContent=n+' / '+LIB.length;$('pgn').textContent=(page+1)+' / '+np;
+  $('pgL').disabled=page<=0;$('pgR').disabled=page>=np-1;
+  updLine();updBadges();
+}
+function updLine(){var c=LIB[sel]&&LIB[sel].c;if(c)$('lcdBox').style.setProperty('--pc',c);else $('lcdBox').style.removeProperty('--pc')}
+/* ---------- Pages (4 x 32 = 128 patches) ---------- */
+function setPage(p){var n=LIB.length/PG;page=Math.max(0,Math.min(n-1,p));slots()}
+$('pgL').onclick=function(){setPage(page-1)};
+$('pgR').onclick=function(){setPage(page+1)};
+/* a dragged patch held over a page arrow turns the page after a short pause */
+[['pgL',-1],['pgR',1]].forEach(function(x){
+  var b=$(x[0]),T=null;
+  function stop(){clearTimeout(T);T=null;b.classList.remove('dover')}
+  b.addEventListener('dragover',function(e){
+    if(dragFrom<0||b.disabled)return;
+    e.preventDefault();b.classList.add('dover');
+    if(!T)T=setTimeout(function(){T=null;setPage(page+x[1])},650);
+  });
+  b.addEventListener('dragleave',stop);
+  b.addEventListener('drop',function(e){e.preventDefault();stop();endDrag()});
+});
+/* safety net: the dragged slot is rebuilt when a page turns mid-drag, so its dragend may never fire */
+document.addEventListener('mousemove',function(e){if(dragFrom>=0&&e.buttons===0)endDrag()});
+document.addEventListener('dragend',function(){if(dragFrom>=0)endDrag()});
+
+/* ---------- Morph: A <-> B crossfader ---------- */
+var DISC={wave:1,vc:1,pOn:1,pTy:1,rot:1};  /* switches and the wave knob change at the halfway point instead of blending (footage and the other steps are rounded as they blend) */
+var mTr=$('mTrack');
+function pv(p,k){return p.p[k]===undefined?INIT[k]:p.p[k]}
+function mReady(){return !mSel&&!!mA&&!!mB}
+function morphAt(t){
+  if(!mA||!mB)return;
+  quiet=true;
+  P.forEach(function(x){
+    var k=x[0],a=pv(mA,k),b=pv(mB,k),v=DISC[k]?(t<.5?a:b):Math.round(a+(b-a)*t);
+    if(v!==S[k])setP(k,v,true);  /* only changed parameters are sent */
+  });
+  quiet=false;
+  showParam('MORPH '+Math.round(t*100)+'%');
+}
+function morphSet(t){
+  mT=Math.max(0,Math.min(1,t));
+  mTr.style.setProperty('--t',mT);mTr.setAttribute('aria-valuenow',Math.round(mT*100));
+  morphAt(mT);
+}
+function morphGlide(to){
+  cancelAnimationFrame(mAnim);pushUndo('morph');
+  var from=mT,t0=performance.now(),dur=260;
+  (function step(now){
+    var u=Math.min(1,(now-t0)/dur);
+    morphSet(from+(to-from)*u*u*(3-2*u));
+    if(u<1)mAnim=requestAnimationFrame(step);
+  })(t0);
+}
+function mShown(){  /* the patches shown as A / B (while picking A then B from MORPH the old pair is hidden) */
+  var seq=!!mSel&&mSeq;
+  return [seq?(mSel==='B'?pa:null):mA,seq?null:mB];
+}
+function updBadges(){
+  var sh=mShown(),a=sh[0],b=sh[1];
+  [].forEach.call($('slots').children,function(c,j){
+    var p=LIB[page*PG+j],m=c.querySelector('.mb'),s='';
+    if(!m)return;
+    if(p&&p===a)s='A';
+    if(p&&p===b)s+=(s?'·':'')+'B';
+    m.textContent=s;
+  });
+}
+function updMorph(){
+  var sh=mShown(),a=sh[0],b=sh[1],ready=mReady();
+  $('morph').classList.toggle('off',!ready);
+  $('mBtn').classList.toggle('on',!!mSel&&mSeq);
+  $('mbA').classList.toggle('blink',mSel==='A');$('mbB').classList.toggle('blink',mSel==='B');
+  $('mbA').classList.toggle('set',!!a);$('mbB').classList.toggle('set',!!b);
+  $('mnA').textContent=a?a.n:'';$('mnB').textContent=b?b.n:'';
+  $('mbA').title=a?'A: '+a.n+' (press to go to A and pick another patch for it)':'Press, then click a patch to set A';
+  $('mbB').title=b?'B: '+b.n+' (press to go to B and pick another patch for it)':'Press, then click a patch to set B';
+  mTr.tabIndex=ready?0:-1;mTr.style.setProperty('--t',mT);
+  updBadges();
+}
+function morphCancel(){mSel=null;mSeq=false;pa=null;updMorph();showMsg('MORPH CANCELED')}
+/* a patch was clicked while A or B is waiting for one */
+function morphPick(p){
+  if(!p||!mSel)return;
+  var side=mSel;
+  if(mSeq&&side==='A'){pa=p;mSel='B';updMorph();showMsg('PICK PATCH B');return}
+  var both=mSeq;  /* MORPH flow finished: A and B are both new, slider starts at A */
+  if(mSeq){mA=pa;mB=p;pa=null;mSeq=false;mT=0}
+  else if(side==='A')mA=p;else mB=p;
+  mSel=null;updMorph();
+  if(mA&&mB){pushUndo('morph');morphSet(mT);if(both)showMsg('MORPH READY')}  /* re-blend with the new patch */
+  else showMsg(side+' SET');
+}
+$('mBtn').onclick=function(){
+  if(mSel){morphCancel();return}
+  mSel='A';mSeq=true;pa=null;updMorph();showMsg('PICK PATCH A');
+};
+/* A / B: jump to that end (when both are set) and wait for a patch to be clicked for it; press again to cancel */
+function sideBtn(side){
+  if(mSel===side){morphCancel();return}
+  if(!mSel&&mA&&mB)morphGlide(side==='A'?0:1);
+  mSeq=false;pa=null;mSel=side;updMorph();showMsg('PICK PATCH '+side);
+}
+$('mbA').onclick=function(){sideBtn('A')};
+$('mbB').onclick=function(){sideBtn('B')};
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&mSel)morphCancel()});
+function mPos(e){var r=mTr.getBoundingClientRect(),cw=$('mCap').offsetWidth;morphSet((e.clientX-r.left-cw/2)/(r.width-cw))}
+mTr.addEventListener('pointerdown',function(e){
+  if(!mReady())return;
+  e.preventDefault();cancelAnimationFrame(mAnim);pushUndo('morph');
+  mTr.setPointerCapture(e.pointerId);mTr.focus();mPos(e);mTr.onpointermove=mPos;
+});
+mTr.addEventListener('pointerup',function(){mTr.onpointermove=null});
+mTr.addEventListener('pointercancel',function(){mTr.onpointermove=null});
+mTr.addEventListener('keydown',function(e){
+  if(!mReady())return;
+  var st=e.shiftKey?.1:.02,k=e.key,t=null;
+  if(k==='ArrowLeft'||k==='ArrowDown')t=mT-st;else if(k==='ArrowRight'||k==='ArrowUp')t=mT+st;
+  else if(k==='Home')t=0;else if(k==='End')t=1;
+  if(t===null)return;
+  e.preventDefault();pushUndo('morph');morphSet(t);
+});
+mTr.addEventListener('wheel',function(e){
+  if(!mReady())return;
+  e.preventDefault();
+  var d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:-e.deltaY;if(e.webkitDirectionInvertedFromDevice)d=-d;
+  if(e.deltaMode===1)d*=33;
+  pushUndo('morph');morphSet(mT+d*.002);
+},{passive:false});
+
+/* right-click palette: 15 colours (5 LED colours, 5 partners, 5 extras) and, bottom right, a notes button for author + description */
+var PAL=['#2f7bff','#2ecc71','#b6e12e','#ff9a1f','#ff3b30',
+         '#ffd400','#e83fa8','#8b5cf6','#1ab0ff','#17d7c5',
+         '#f2f0ea','#ff9ec7','#b0703c','#8c95a3','#b3173a'];
+var pal=el('div','cpal');pal.hidden=true;document.body.appendChild(pal);
+var palI=-1,palX=0,palY=0,palCommit=null;
+function closePal(){if(palCommit){var f=palCommit;palCommit=null;f()}pal.hidden=true;palI=-1}
+function placePal(){
+  var w=pal.offsetWidth,h=pal.offsetHeight;
+  pal.style.left=Math.max(6,Math.min(window.innerWidth-w-6,palX))+'px';pal.style.top=Math.max(6,Math.min(window.innerHeight-h-6,palY))+'px';
+}
+function openPal(i,x,y){palI=i;palX=x;palY=y;palColors();pal.hidden=false;placePal()}
+function palColors(){
+  palCommit=null;pal.innerHTML='';var i=palI,g=el('div','cgrid');
+  PAL.forEach(function(c){
+    var b=el('button',LIB[i].c===c?'cur':'');b.type='button';b.style.setProperty('--c',c);b.setAttribute('aria-label',c);
+    b.onclick=function(){pushUndo();if(LIB[i].c===c)delete LIB[i].c;else LIB[i].c=c;persist();slots();closePal()};  /* picking the current colour again removes it */
+    g.appendChild(b);
+  });
+  var f=el('div','cfoot'),nb=el('button','cnote'+(LIB[i].a||LIB[i].d?' has':''));
+  nb.type='button';nb.title='Author and description';nb.setAttribute('aria-label','Author and description');
+  nb.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v11.3A3.5 3.5 0 1 0 11 17.5V8h7V3z"/></svg>';
+  nb.onclick=function(){palNotes();placePal()};
+  f.appendChild(nb);pal.appendChild(g);pal.appendChild(f);
+}
+function palNotes(){
+  var i=palI;pal.innerHTML='';
+  var w=el('div','cnotes'),h=el('div','chead'),back=el('button');back.type='button';back.textContent='\u2039';back.title='Back to colours';
+  var ht=el('span');ht.textContent='NOTES';h.appendChild(back);h.appendChild(ht);w.appendChild(h);
+  var l1=el('label');l1.textContent='AUTHOR';var ai=el('input');ai.type='text';ai.maxLength=30;ai.placeholder='Who made it';ai.value=LIB[i].a||'';
+  var l2=el('label'),cnt=el('span');l2.appendChild(el('span'));l2.firstChild.textContent='DESCRIPTION';l2.appendChild(cnt);
+  var di=el('input');di.type='text';di.maxLength=50;di.placeholder='What it sounds like';di.value=LIB[i].d||'';
+  function upd(){cnt.textContent=di.value.length+'/50'}upd();di.oninput=upd;
+  w.appendChild(l1);w.appendChild(ai);w.appendChild(l2);w.appendChild(di);pal.appendChild(w);
+  /* saved when the box closes (click away, Enter, Esc) or when going back to the colours */
+  function commit(){
+    var s=LIB[i];if(!s)return;
+    var a=ai.value.trim(),d=di.value.trim().slice(0,50);
+    if((s.a||'')===a&&(s.d||'')===d)return;
+    pushUndo();if(a)s.a=a;else delete s.a;if(d)s.d=d;else delete s.d;
+    persist();slots();
+  }
+  palCommit=commit;
+  back.onclick=function(){var f=palCommit;palCommit=null;if(f)f();palColors();placePal()};
+  [ai,di].forEach(function(x){x.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();closePal()}}});
+  ai.focus();
+}
+document.addEventListener('pointerdown',function(e){if(!pal.hidden&&!pal.contains(e.target))closePal()},true);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closePal()});
+window.addEventListener('scroll',closePal,true);
+window.addEventListener('resize',closePal);
+function flash(id,cls){var b=$(id);clearTimeout(b._t);b.classList.add(cls);b._t=setTimeout(function(){b.classList.remove(cls)},700)}
+function doSave(){pushUndo();LIB[sel]={n:(LIB[sel]&&LIB[sel].n)||('Patch '+(sel+1)),p:copy(S),c:LIB[sel]&&LIB[sel].c||undefined,a:LIB[sel]&&LIB[sel].a||undefined,d:LIB[sel]&&LIB[sel].d||undefined};persist();slots();flash('bSave','ok')}
+function selList(){return Object.keys(selSet()).map(Number).filter(function(i){return LIB[i]}).sort(function(x,y){return x-y})}
+function doClear(){var l=selList();if(!l.length)return;pushUndo();l.forEach(function(i){LIB[i]=null});persist();slots();flash('bDel','bad')}  /* the colour goes with the patch */
+$('bSave').onclick=doSave;
+$('bDel').onclick=doClear;
+/* Reset: every fader goes back to where the hardware control was last seen */
+$('bReset').onclick=function(){
+  if(!Object.keys(GV).length){showMsg('NO HARDWARE POSITIONS YET');return}
+  var ch=P.filter(function(x){return GV[x[0]]!==undefined&&GV[x[0]]!==S[x[0]]});
+  if(!ch.length){showMsg('ALREADY AT HARDWARE');return}
+  pushUndo();quiet=true;
+  ch.forEach(function(x){setP(x[0],GV[x[0]],true)});
+  quiet=false;showMsg('FADERS RESET');flash('bReset','ok');
+};
+/* keyboard shortcuts: S saves, C / Delete / Backspace clears the selected slot */
+document.addEventListener('keydown',function(e){
+  if(e.metaKey||e.ctrlKey||e.altKey||e.repeat)return;
+  var t=e.target;if(t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable))return;
+  var k=e.key;
+  if(k==='s'||k==='S'){e.preventDefault();doSave()}
+  else if(k==='c'||k==='C'||k==='Delete'||k==='Backspace'){e.preventDefault();doClear()}
+});
+/* arrow keys walk the library (left/right one slot, up/down one row); Shift extends a selection from where it started, without loading patches into the synth */
+function slotCols(){return Math.max(1,getComputedStyle($('slots')).gridTemplateColumns.split(' ').length)}
+function goTo(i,extend){
+  i=Math.max(0,Math.min(LIB.length-1,i));
+  var np=Math.floor(i/PG),moved=np!==page;
+  if(extend){
+    ms=rectSet(anc,i);sel=i;  /* Shift selects the block of the grid between the start slot and this one */
+    if(moved)setPage(np);else markSel();
+    showMsg(Object.keys(ms).length+' SELECTED');return;
+  }
+  ms={};anc=i;
+  if(LIB[i])pushUndo('nav');
+  sel=i;
+  if(moved)setPage(np);else markSel();
+  if(LIB[i]){applyAll(LIB[i].p,true);showName(LIB[i].n.toUpperCase())}
+}
+document.addEventListener('keydown',function(e){
+  var c=slotCols(),d={ArrowLeft:-1,ArrowRight:1,ArrowUp:-c,ArrowDown:c}[e.key];
+  if(d===undefined||e.metaKey||e.ctrlKey||e.altKey)return;
+  var t=e.target;
+  if(t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable||(t.closest&&t.closest('.mtrack'))))return;
+  if(mSel||!pal.hidden||document.querySelector('.ddmenu:not([hidden])'))return;
+  e.preventDefault();
+  var tg=Math.max(0,Math.min(LIB.length-1,sel+d));
+  if(e.shiftKey&&(d===1||d===-1)&&gridPos(tg).r!==gridPos(sel).r)return;  /* Shift+left/right stops at the edge of its row */
+  goTo(tg,e.shiftKey);
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&Object.keys(selSet()).length>1){ms={};anc=sel;markSel()}});
+/* Ctrl/Cmd+A selects every patch on this page */
+document.addEventListener('keydown',function(e){
+  if(!(e.ctrlKey||e.metaKey)||e.altKey||e.shiftKey||String(e.key).toLowerCase()!=='a')return;
+  var t=e.target;if(t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable))return;
+  if(mSel||!pal.hidden)return;
+  e.preventDefault();var o={};
+  for(var j=page*PG;j<page*PG+PG;j++)if(LIB[j])o[j]=true;
+  if(!Object.keys(o).length)return;
+  if(!o[sel])sel=+Object.keys(o)[0];
+  ms=o;anc=sel;markSel();showMsg(Object.keys(o).length+' SELECTED');
+});
+$('bInit').onclick=function(){pushUndo();var p=copy(INIT);p.vol=S.vol;applyAll(p,true);showName('INIT PATCH')};
+function rndPatch(base){
+  var r=function(a,b){return a+Math.floor(Math.random()*(b-a+1))},p=copy(base);
+  p.wave=r(0,4);p.vc=r(0,1);p.vcD=r(0,4);p.pOn=r(0,1);p.pTy=r(0,1);p.pL=r(0,4);p.rot=r(0,3);
+  FT.forEach(function(f){p[f[0]]=Math.random()<.4?0:r(1,6)});
+  if(FT.every(function(f){return p[f[0]]===0}))p.f8=6;  /* all footage up = no organ sound */
+  p.dist=Math.random()<.5?0:r(10,100);p.rev=r(0,100);  /* distortion kept moderate: speaker safety */
+  return p;
+}
+$('bRand').onclick=function(){
+  if(Object.keys(selSet()).length>1){  /* several slots selected: every filled one gets its own random settings, saved in place (Ctrl/Cmd+Z undoes) */
+    var l=selList();
+    if(!l.length){showMsg('NOTHING TO RANDOMIZE');return}
+    pushUndo();
+    l.forEach(function(i){LIB[i].p=rndPatch(LIB[i].p)});
+    persist();slots();
+    if(LIB[sel]){applyAll(LIB[sel].p,true);showName(LIB[sel].n.toUpperCase())}
+    showMsg(l.length+' RANDOMIZED');return;
+  }
+  pushUndo();applyAll(rndPatch(S),true);
+};
+function dl(name,data,type){
+  var a=el('a');a.href=URL.createObjectURL(new Blob([data],{type:type}));a.download=name;
+  document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+}
+/* Export dropdown */
+function ddOpen(o){$('ddMenu').hidden=!o;$('bExp').setAttribute('aria-expanded',o?'true':'false')}
+$('bExp').onclick=function(e){e.stopPropagation();ddOpen($('ddMenu').hidden)};
+document.addEventListener('click',function(e){if(!$('ddMenu').hidden&&!$('ddMenu').contains(e.target))ddOpen(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')ddOpen(false)});
+$('exJson').onclick=function(){ddOpen(false);dl('reface-yc-library.json',JSON.stringify(LIB,null,1),'application/json')};
+$('exSyx').onclick=function(){
+  ddOpen(false);
+  var b=[];P.forEach(function(x){b=b.concat(pc(x[0]))});
+  dl((LIB[sel]?LIB[sel].n:'reface-yc-patch')+'.syx',new Uint8Array(b),'application/octet-stream');
+};
+/* Import: drop a .json / .syx file onto the library */
+function isYCpatch(s){return !s||(!!s.p&&typeof s.p==='object'&&('f8' in s.p||'wave' in s.p))}  /* guards against a Reface CS / other library being dropped in */
+function importFile(f){
+  if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      if(/\.syx$/i.test(f.name)){
+        pushUndo();var u=new Uint8Array(rd.result),st=-1;
+        for(var i=0;i<u.length;i++){
+          if(u[i]===0xF0)st=i;
+          else if(u[i]===0xF7&&st>=0){handle({data:u.subarray(st,i+1)});st=-1}
+        }
+        sendAll();
+      }else{
+        var j=JSON.parse(rd.result);
+        if(Array.isArray(j)&&(j.length===32||j.length===128)){
+          if(!j.every(isYCpatch)){showMsg('NOT A YC LIBRARY');return}
+          pushUndo();while(j.length<128)j.push(null);LIB=j;persist();slots();
+        }else if(j&&j.p){
+          if(!isYCpatch(j)){showMsg('NOT A YC PATCH');return}
+          pushUndo();LIB[sel]=j;persist();slots();
+        }
+      }
+    }catch(e){showMsg('IMPORT FAILED')}
+  };
+  if(/\.syx$/i.test(f.name))rd.readAsArrayBuffer(f);else rd.readAsText(f);
+}
+var libBox=document.querySelector('.dropbox');
+function hasFiles(e){return !!e.dataTransfer&&[].indexOf.call(e.dataTransfer.types||[],'Files')>=0}
+libBox.addEventListener('dragover',function(e){
+  if(dragFrom>=0||!hasFiles(e))return;
+  e.preventDefault();e.dataTransfer.dropEffect='copy';libBox.classList.add('filedrop');
+});
+libBox.addEventListener('dragleave',function(e){if(!libBox.contains(e.relatedTarget))libBox.classList.remove('filedrop')});
+libBox.addEventListener('drop',function(e){
+  if(dragFrom>=0||!hasFiles(e))return;
+  e.preventDefault();libBox.classList.remove('filedrop');importFile(e.dataTransfer.files[0]);
+});
+/* stop the browser from opening a file that is dropped outside the library */
+['dragover','drop'].forEach(function(t){document.addEventListener(t,function(e){if(hasFiles(e))e.preventDefault()})});
+
+/* ---------- Keyboard display (37 keys, Yamaha naming: 60 = C3) ---------- */
+var held={},kwin=48,KN=37,BLK={1:1,3:1,6:1,8:1,10:1};
+function kmax(){return Math.floor((127-(KN-1))/12)*12}
+function oct(n){return Math.floor(n/12)-2}
+function drawKeys(){
+  var k=$('kbd'),wn=[],bn=[],i,n;k.innerHTML='';
+  for(i=0;i<KN;i++){n=kwin+i;if(BLK[n%12])bn.push(n);else wn.push(n)}
+  wn.forEach(function(n){var d=el('i','wk');d.dataset.n=n;paintKey(d,n);k.appendChild(d)});
+  var W=100/wn.length;
+  bn.forEach(function(n){
+    var idx=wn.filter(function(x){return x<n}).length,d=el('i','bk');
+    d.dataset.n=n;paintKey(d,n);d.style.left=(idx*W-W*.3)+'%';d.style.width=(W*.6)+'%';k.appendChild(d);
+  });
+}
+function paintKey(e,n){
+  if(!e)return;
+  var v=held[n],base=e.classList.contains('bk')?'#111':'#e9e7e1';
+  e.style.background=v?'color-mix(in srgb,var(--acc) '+(5+95*(v-1)/126).toFixed(1)+'%,'+base+')':'';  /* velocity 1 = 5%, 127 = 100% */
+}
+function note(n,on,vel){
+  if(on){
+    held[n]=Math.max(1,Math.min(127,vel||127));
+    if(n<kwin||n>kwin+KN-1){kwin=Math.min(kmax(),Math.floor(n/12)*12);drawKeys();return}
+  }else delete held[n];
+  paintKey($('kbd').querySelector('[data-n="'+n+'"]'),n);
+}
+/* play the synth by clicking / dragging across the on-screen keys */
+var pn=null,KVEL=100;
+function kSend(n,on){
+  var ch=rxCh>15?0:rxCh;
+  if(AR.on)arpNote(n,on,KVEL);
+  else if(outP)try{outP.send([(on?0x90:0x80)|ch,n,on?KVEL:0])}catch(e){}
+  note(n,on,KVEL);
+}
+function kOff(){if(pn!==null){var n=pn;pn=null;kSend(n,false)}}
+function kAt(e){var t=document.elementFromPoint(e.clientX,e.clientY);return t&&t.dataset&&t.dataset.n!==undefined&&$('kbd').contains(t)?+t.dataset.n:null}
+function kMove(e){var n=kAt(e);if(n===pn)return;kOff();if(n!==null){pn=n;kSend(n,true)}}
+var kb=$('kbd');
+kb.addEventListener('pointerdown',function(e){e.preventDefault();kb.setPointerCapture(e.pointerId);kMove(e)});
+kb.addEventListener('pointermove',function(e){if(e.buttons)kMove(e)});
+kb.addEventListener('pointerup',kOff);kb.addEventListener('pointercancel',kOff);
+window.addEventListener('blur',kOff);
+
+/* ---------- Arpeggiator ----------
+   Held keys (hardware or on-screen) are turned into a stepped pattern that is sent to the synth as MIDI notes on its receive channel.
+   While it runs, Local Control is switched off so the synth only plays the arpeggio, and it is restored when the arpeggiator is turned off. */
+var STY=[['up','Up'],['down','Down'],['updown','Up & Down'],['played','As played'],['random','Random']];
+var SCL=[['off','Off (held notes)'],['major','Major (Ionian)'],['dorian','Dorian'],['phrygian','Phrygian'],['lydian','Lydian'],['mixolydian','Mixolydian'],
+ ['minor','Minor (Aeolian)'],['locrian','Locrian'],['harmonic','Harmonic minor'],['melodic','Melodic minor'],['pentmaj','Major pentatonic'],['pentmin','Minor pentatonic'],['blues','Blues']];
+var SCI={major:[0,2,4,5,7,9,11],dorian:[0,2,3,5,7,9,10],phrygian:[0,1,3,5,7,8,10],lydian:[0,2,4,6,7,9,11],mixolydian:[0,2,4,5,7,9,10],
+ minor:[0,2,3,5,7,8,10],locrian:[0,1,3,5,6,8,10],harmonic:[0,2,3,5,7,8,11],melodic:[0,2,3,5,7,9,11],pentmaj:[0,2,4,7,9],pentmin:[0,3,5,7,10],blues:[0,3,5,6,7,10]};
+var RATB={'1/4':1,'1/8':2,'1/8T':3,'1/16':4,'1/16T':6,'1/32':8};
+var RATO=Object.keys(RATB).map(function(k){return [k,k]});
+var AR={on:false,hold:false,sty:'up',scl:'off',rat:'1/16',oct:1,gate:50,bpm:120};
+var arpPool=[],arpDown={},arpStep=0,arpNext=0,arpTimer=null,arpLcOff=false;
+function arpMs(){return 60000/AR.bpm/RATB[AR.rat]}
+function arpSeq(){
+  if(!arpPool.length)return [];
+  var base;
+  if(AR.scl!=='off'){  /* scale mode: the lowest held note is the root */
+    var root=arpPool.reduce(function(a,b){return b.n<a.n?b:a});
+    base=SCI[AR.scl].map(function(i){return {n:root.n+i,v:root.v}});
+  }else if(AR.sty==='played')base=arpPool;
+  else base=arpPool.slice().sort(function(a,b){return a.n-b.n});
+  var out=[];
+  for(var o=0;o<AR.oct;o++)base.forEach(function(x){var n=x.n+12*o;if(n<=127)out.push({n:n,v:x.v})});
+  if(AR.sty==='down')out.reverse();
+  else if(AR.sty==='updown'&&out.length>2)out=out.concat(out.slice(1,-1).reverse());
+  return out;
+}
+function arpShow(n,on,v){  /* light the arpeggio notes on the keyboard without moving the visible window */
+  if(n<kwin||n>=kwin+KN)return;
+  if(on)held[n]=v||100;else if(arpDown[n])held[n]=arpDown[n];else delete held[n];
+  paintKey($('kbd').querySelector('[data-n="'+n+'"]'),n);
+}
+function arpFire(t){
+  var seq=arpSeq();if(!seq.length)return;
+  var e=AR.sty==='random'?seq[Math.floor(Math.random()*seq.length)]:seq[arpStep%seq.length];
+  arpStep++;
+  var ch=rxCh>15?0:rxCh,ms=arpMs(),len=Math.max(5,Math.min(ms*AR.gate/100,ms-4)),now=performance.now();
+  if(outP)try{outP.send([0x90|ch,e.n,e.v],t);outP.send([0x80|ch,e.n,0],t+len)}catch(x){}  /* time-stamped, so the timing stays tight */
+  setTimeout(function(){arpShow(e.n,true,e.v)},Math.max(0,t-now));
+  setTimeout(function(){arpShow(e.n,false)},Math.max(0,t+len-now));
+}
+function arpPump(){
+  var now=performance.now();
+  if(arpNext<now-100)arpNext=now;
+  while(arpNext<now+80){arpFire(arpNext);arpNext+=arpMs()}
+}
+function arpNote(n,on,vel){
+  if(on){
+    if(AR.hold&&!Object.keys(arpDown).length)arpPool=[];  /* a new chord replaces the latched one */
+    var first=!arpPool.length;
+    arpDown[n]=vel||100;
+    if(!arpPool.some(function(x){return x.n===n}))arpPool.push({n:n,v:vel||100});
+    if(first){arpStep=0;arpNext=performance.now()+10}
+  }else{
+    delete arpDown[n];
+    if(!AR.hold)arpPool=arpPool.filter(function(x){return x.n!==n});
+    if(!arpPool.length)arpStep=0;
+  }
+}
+function arpPanic(){
+  var ch=rxCh>15?0:rxCh,go=function(){if(outP)try{outP.send([0xB0|ch,123,0])}catch(e){}};
+  go();setTimeout(go,150);
+}
+function arpSet(on){
+  AR.on=on;setTog('arpOn',on);
+  if(on){
+    if(outP&&$('lc').getAttribute('aria-pressed')==='true'){sysSend(6,0);setTog('lc',false);arpLcOff=true}
+    arpNext=performance.now()+20;arpTimer=setInterval(arpPump,20);
+  }else{
+    clearInterval(arpTimer);arpTimer=null;arpPool=[];arpDown={};arpPanic();
+    if(arpLcOff){sysSend(6,1);setTog('lc',true);arpLcOff=false}
+    held={};drawKeys();
+  }
+}
+var arpDds=[];
+function mkDd(label,items,get,set){  /* dropdown that opens upwards */
+  var w=el('div','dd'),b=el('button'),m=el('div','ddmenu');
+  b.type='button';m.hidden=true;
+  function lab(){var c=items.filter(function(i){return String(i[0])===String(get())})[0];b.innerHTML='<small>'+label+'</small>'+c[1]+' <span aria-hidden="true">\u25B4</span>'}
+  function mark(){[].forEach.call(m.children,function(x,i){x.classList.toggle('cur',String(items[i][0])===String(get()))})}
+  items.forEach(function(it){
+    var x=el('button');x.type='button';x.textContent=it[1];
+    x.onclick=function(e){e.stopPropagation();set(it[0]);m.hidden=true;lab()};
+    m.appendChild(x);
+  });
+  b.onclick=function(e){e.stopPropagation();var o=m.hidden;arpDds.forEach(function(c){c.hidden=true});m.hidden=!o;mark()};
+  w.appendChild(b);w.appendChild(m);arpDds.push(m);lab();return w;
+}
+document.addEventListener('click',function(){arpDds.forEach(function(c){c.hidden=true})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')arpDds.forEach(function(c){c.hidden=true})});
+function arpTg(id,txt,tip,fn){
+  var b=el('button','tg');b.type='button';b.id=id;b.textContent=txt;b.title=tip;b.setAttribute('aria-pressed','false');
+  b.onclick=function(){fn(b.getAttribute('aria-pressed')!=='true')};return b;
+}
+(function(){
+  var box=$('arp');
+  box.appendChild(arpTg('arpOn','ARP','Arpeggiator on / off. While it runs, Local Control is switched off so the synth only plays the arpeggio.',arpSet));
+  box.appendChild(arpTg('arpHold','Hold','Keep the pattern going after you let go of the keys',function(on){
+    AR.hold=on;setTog('arpHold',on);if(!on)arpPool=arpPool.filter(function(x){return arpDown[x.n]});
+  }));
+  box.appendChild(mkDd('STYLE',STY,function(){return AR.sty},function(v){AR.sty=v}));
+  box.appendChild(mkDd('SCALE',SCL,function(){return AR.scl},function(v){AR.scl=v;arpStep=0}));
+  box.appendChild(mkDd('RATE',RATO,function(){return AR.rat},function(v){AR.rat=v}));
+  box.appendChild(mkDd('OCT',[[1,'1'],[2,'2'],[3,'3'],[4,'4']],function(){return AR.oct},function(v){AR.oct=+v;arpStep=0}));
+  box.appendChild(mkDd('GATE',[[25,'25%'],[50,'50%'],[75,'75%'],[100,'100%']],function(){return AR.gate},function(v){AR.gate=+v}));
+  var lb=el('label','bpm'),bi=el('input');lb.textContent='BPM';
+  bi.type='number';bi.min=30;bi.max=300;bi.step=1;bi.value=AR.bpm;
+  bi.oninput=function(){var v=+bi.value;if(v>=30&&v<=300)AR.bpm=v};
+  bi.onblur=function(){bi.value=AR.bpm};
+  bi.title='Scroll over the number to change the tempo (Shift = 10 at a time)';
+  var wacc=0;  /* scroll up = faster, down = slower; one BPM per mouse notch, trackpads accumulate */
+  bi.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var dy=wdy(e);
+    var st=0;
+    if(Math.abs(dy)>=50)st=dy<0?1:-1;
+    else{wacc+=dy;if(Math.abs(wacc)>=40){st=wacc<0?1:-1;wacc=0}}
+    if(!st)return;
+    AR.bpm=Math.max(30,Math.min(300,AR.bpm+st*(e.shiftKey?10:1)));bi.value=AR.bpm;
+  },{passive:false});
+  lb.appendChild(bi);box.appendChild(lb);
+})();
+
+/* window-size layout: one row of modules + a longer keyboard on wide screens */
+function layout(){
+  var wide=window.innerWidth>=1500,root=document.documentElement,nk=wide?61:37;
+  document.body.classList.toggle('wide',wide);
+  root.style.setProperty('--k','1');
+  if(wide){
+    var nat=26+10*(synth.children.length-1);
+    [].forEach.call(synth.children,function(c){nat+=c.offsetWidth});
+    root.style.setProperty('--k',Math.max(.9,Math.min(1.5,(synth.clientWidth-6)/nat)).toFixed(3));
+  }
+  root.style.removeProperty('--trh');root.style.removeProperty('--kbh');
+  /* The CS and CP editors use the same rule, so all three line up: panel = 17.2% of its width tall, keyboard 15% of the width.
+     Fader height is solved so the whole panel hits it; if the window is still too short, only the keyboard shrinks (down to 90px). */
+  if(wide){
+    var W=synth.offsetWidth,H=Math.round(W*.172),kbh=Math.round(W*.15),trh=132*(parseFloat(root.style.getPropertyValue('--k'))||1)*1.55;
+    root.style.setProperty('--kbh',kbh+'px');
+    for(var q=0;q<2;q++){root.style.setProperty('--trh',trh+'px');trh=Math.max(60,trh+H-synth.offsetHeight)}
+    root.style.setProperty('--trh',trh+'px');
+    var over=document.documentElement.scrollHeight-window.innerHeight;
+    if(over>0){kbh-=Math.min(over,kbh-90);root.style.setProperty('--kbh',kbh+'px')}
+  }
+  if(nk!==KN){KN=nk;kwin=wide?36:48;drawKeys()}
+}
+window.addEventListener('resize',layout);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);  /* web fonts change text heights a little */
+applyAll(INIT,false);slots();updMorph();layout();drawKeys();
+connect(true);  /* look for a Reface YC straight away
+   (the browser asks for MIDI / SysEx permission the first time) */
+})();
+</script>
+<style id="nbbCss">
+.nbb{position:fixed;left:12px;top:10px;z-index:2147483000;display:flex;gap:8px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s,transform .18s;font:600 13px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.nbb.on{opacity:1;transform:none;pointer-events:auto}
+.nbb a{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;text-decoration:none;color:#f3f1ec;background:#1b1d27ee;border:1px solid #ffffff33;box-shadow:0 6px 20px #0008;backdrop-filter:blur(6px);white-space:nowrap}
+.nbb a:hover{filter:brightness(1.18)}
+.nbb a.k{background:#ff5e5bf2;border-color:#ff5e5b;color:#fff}
+</style>
+<div class="nbb" id="nbb" aria-label="Site links"><a href="../" id="nbbBack">&larr; Back to Editors</a><a class="k" href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener">&#9749; Support on Ko-fi</a></div>
+<script>
+(function(){var b=document.getElementById('nbb'),t=0,near=false,hd,hb;
+function set(on){clearTimeout(t);if(on){b.classList.add('on')}else{t=setTimeout(function(){b.classList.remove('on')},350)}}
+addEventListener('mousemove',function(e){var inB=b.contains(e.target),hb=(e.clientY<200&&(hd=document.querySelector('.head')))?hd.getBoundingClientRect().bottom+8:90;zone=e.clientY<hb;near=zone||inB;set(near||(b.classList.contains('on')&&inB))},{passive:true});
+addEventListener('pointerdown',function(e){if(e.pointerType==='touch'&&e.clientX<90&&e.clientY<70){set(true);setTimeout(function(){set(false)},4000)}},{passive:true});
+document.addEventListener('mouseleave',function(){set(false)});
+})();
+</script>
+<style id="rycOfficialCss">
+#rycUnof{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:2147482000;max-width:min(680px,calc(100vw - 24px));display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:12px;background:#1b1d27f2;border:1px solid #ff5e5b;color:#f3f1ec;font:600 13px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-shadow:0 8px 28px #000a}
+#rycUnof a{color:#ff8f8c;text-decoration:underline}#rycUnof button{all:unset;cursor:pointer;padding:2px 6px;opacity:.7}#rycUnof button:hover{opacity:1}
+:root{--ryc-sig:capmisteri-2026-c72e5a}
+</style>
+<script>
+/* (c) 2026 @capmisteri. All rights reserved. Reface YC Editor, official copy. See LICENSE. */
+(function(){
+ var OFFICIAL_HOSTS=['capmisteri.github.io'];            /* official site: https://capmisteri.github.io/gear-editors/ */
+ var OFFICIAL_URL='https://capmisteri.github.io/gear-editors/', OFFICIAL_PATH='/gear-editors/';
+ window.__rycId='ryc-capmisteri-2b6e5d04';
+ try{console.log('%cReface YC Editor%c (c) 2026 @capmisteri. All rights reserved.','font-weight:700','');}catch(e){}
+ var h=location.hostname,local=location.protocol==='file:'||!h||h==='localhost'||h==='127.0.0.1'||h==='[::1]';
+ if(local||(OFFICIAL_HOSTS.indexOf(h)>-1&&location.pathname.indexOf(OFFICIAL_PATH)===0))return;
+ addEventListener('DOMContentLoaded',function(){
+  var d=document.createElement('div');d.id='rycUnof';d.setAttribute('role','note');
+  d.innerHTML='<span>This is an unofficial copy of the Reface YC Editor by @capmisteri. Get the original at <a href="'+OFFICIAL_URL+'" rel="noopener">'+OFFICIAL_URL.replace('https://','')+'</a>.</span><button type="button" aria-label="Dismiss">✕</button>';
+  d.querySelector('button').onclick=function(){d.remove()};document.body.appendChild(d);
+ });
+})();
+</script>
+</body>
+</html>

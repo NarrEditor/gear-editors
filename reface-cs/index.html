@@ -50,14 +50,14 @@ button{cursor:pointer}button:hover{border-color:var(--acc)}
 .dot{width:10px;height:10px;border-radius:50%;background:#666;display:inline-block}
 .dot.ok{background:#3bd16f;box-shadow:0 0 6px #3bd16f}
 .mon{font:11px ui-monospace,Menlo,Consolas,monospace;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.synth{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;background:#0a0a0b;border:1px solid var(--line);border-radius:10px;padding:12px}
+.synth{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;background:linear-gradient(#eeeeec,#dbdbd9);border:1px solid #b4b5b2;box-shadow:inset 0 1px 0 rgba(255,255,255,.7);border-radius:10px;padding:12px}  /* the hardware's silver-white body (sampled from the photo) behind the dark module panels */
 .sec{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px 10px}
 .sec h2{margin:0 0 10px;font-size:10px;letter-spacing:.16em;color:var(--mute);text-align:center;font-weight:600}
 .ctl{display:flex;gap:14px;justify-content:center;align-items:flex-start}
 .sl,.selw{display:flex;flex-direction:column;align-items:center;gap:6px;user-select:none;touch-action:none}
 .sl{width:58px}
 .sl label,.selw label{font-size:9px;letter-spacing:.08em;color:var(--mute);text-align:center}
-.tr{position:relative;width:50px;height:148px;cursor:ns-resize}
+.tr{position:relative;width:50px;height:128px;cursor:ns-resize}  /* was 148px: shorter panel, to match the CP */
 .tr:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;background:#050505;border-radius:3px;box-shadow:0 0 0 1px #3a3c41}
 .sl.bal{width:92px}
 .egl{position:absolute;left:-24px;width:22px;text-align:right;font-size:8px;line-height:1;letter-spacing:.06em;color:var(--mute);pointer-events:none}
@@ -79,7 +79,7 @@ body.wide .sl.por{width:calc(120px*var(--k));padding-right:calc(62px*var(--k))}
 .ghost.aged{opacity:.3;filter:blur(3.9px)}  /* once the editor fader leaves the hardware position: fades from full opacity to .4 and blurs 20% more, over 2s */
 .ghost:after{background:#000}
 .opt.hw .led{outline:2px solid rgba(255,255,255,.75);outline-offset:2px}
-.sel{display:flex;flex-direction:column;justify-content:space-between;height:148px}
+.sel{display:flex;flex-direction:column;justify-content:space-between;height:128px}
 .opt{display:flex;align-items:center;gap:7px;background:none;border:0;padding:0;height:22px;color:var(--ink);font-size:10px;letter-spacing:.06em;text-align:left}
 .opt:hover{border:0}
 .led{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid #000;background:color-mix(in srgb,var(--c) 22%,#0c0c0c)}
@@ -106,6 +106,7 @@ body.wide .sl.por{width:calc(120px*var(--k));padding-right:calc(62px*var(--k))}
 .slot em.mb{position:absolute;top:3px;right:7px;z-index:1;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--acc);text-shadow:0 0 4px #000}
 .slot.empty span{opacity:.35}
 .slot.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.slot.ms{border-color:color-mix(in srgb,var(--acc) 65%,transparent);background:color-mix(in srgb,var(--acc) 16%,#141517)}  /* extra slots picked with Shift */
 .slot.drag{opacity:.35}
 .slot.over{border-color:var(--acc);background:#1b2a31;box-shadow:0 0 0 2px var(--acc)}
 .slots.sorting .slot *{pointer-events:none}
@@ -223,9 +224,9 @@ body.wide .sec h2{font-size:calc(10px*var(--k))}
 body.wide .ctl{gap:calc(14px*var(--k))}
 body.wide .sl{width:calc(58px*var(--k))}
 body.wide .sl label,body.wide .selw label{font-size:calc(9px*var(--k))}
-body.wide .tr{width:calc(50px*var(--k));height:var(--trh,calc(132px*var(--k)*1.8))}
+body.wide .tr{width:calc(50px*var(--k));height:var(--trh,calc(132px*var(--k)*1.55))}
 body.wide .cap{width:calc(38px*var(--k));margin-left:calc(-19px*var(--k))}
-body.wide .sel{height:var(--trh,calc(132px*var(--k)*1.8))}
+body.wide .sel{height:var(--trh,calc(132px*var(--k)*1.55))}
 body.wide .opt{height:calc(22px*var(--k));font-size:calc(10px*var(--k));gap:calc(7px*var(--k))}
 body.wide .led{width:calc(14px*var(--k));height:calc(14px*var(--k))}
 body.wide .opt svg{width:calc(24px*var(--k));height:calc(16px*var(--k))}
@@ -260,17 +261,17 @@ body.wide .egl{font-size:calc(8px*var(--k))}
         <path d="M208 18C203 11 196 8 188 8C174 8 164 17 164 26C164 35 174 44 188 44C196 44 203 41 208 34"/>
         <path d="M252 14C248 10 242 8 236 8C226 8 222 13 222 18C222 24 229 26 236 26C244 26 250 28 250 34C250 40 244 44 236 44C228 44 222 41 219 36"/>
       </svg>
-      <span class="bmeta"><b>EDITOR</b><button type="button" class="ver" id="ver" aria-expanded="false" aria-controls="about">v1.7</button></span>
+      <span class="bmeta"><b>EDITOR</b><button type="button" class="ver" id="ver" aria-expanded="false" aria-controls="about">v1.11</button></span>
       <div class="about" id="about" role="dialog" aria-label="About this editor" hidden>
         <h3>QUICK SETUP</h3>
         <ol>
           <li>Plug the Reface CS in with USB and switch it on.</li>
-          <li>Use Chrome or Edge and allow MIDI access, including SysEx. The editor connects by itself; otherwise press <strong>Connect</strong> (choose the Reface CS as MIDI In and Out).</li>
+          <li>Use Chrome, Edge or Brave and allow MIDI access, including SysEx. The editor connects by itself; otherwise press <strong>Connect</strong> (choose the Reface CS as MIDI In and Out).</li>
           <li>Move a slider on the synth: its dashed shadow shows where the hardware control sits.</li>
         </ol>
         <h3>IN BRIEF</h3>
         <ul>
-          <li><strong>Library:</strong> 128 slots on 4 pages, stored in this browser (Export to back up; drop a .json or .syx to import). Double-click a slot to name it, right-click for a colour, drag to reorder (Alt/Option copies). Select a slot and press <strong>S</strong> to save into it, <strong>C</strong> or <strong>Delete</strong> to clear. Ctrl/Cmd+Z undoes, add Shift to redo.</li>
+          <li><strong>Library:</strong> 128 slots on 4 pages, stored in this browser (Export to back up; drop a .json or .syx to import). Double-click a slot to name it, right-click for a colour, drag to reorder (Alt/Option copies). Select a slot and press <strong>S</strong> to save into it, <strong>C</strong> or <strong>Delete</strong> to clear. Arrow keys walk the library; Shift+click or Shift+arrows selects a block of the grid (like a rectangle between two slots), Ctrl/Cmd+click picks slots one by one, Ctrl/Cmd+A selects the page. Drag any selected slot to move the whole selection (Alt/Option copies), and the landing slots preview as you hover. With several selected, Random re-rolls each patch on its own and Clear removes them all. Ctrl/Cmd+Z undoes, add Shift to redo.</li>
           <li><strong>Morph:</strong> press MORPH, click a patch for A and another for B, then slide to blend. Selectors switch at the halfway point.</li>
           <li><strong>Synth:</strong> scroll over a fader to move it, double-click to return it to the hardware position. The gear holds master tune, transpose, bend range and MIDI Control (needed for the editor to follow the synth&rsquo;s own sliders).</li>
         </ul>
@@ -349,7 +350,7 @@ body.wide .egl{font-size:calc(8px*var(--k))}
       </div>
      <div class="tr2">
       <span class="dropHint">Drag a .json / .syx file in to import</span>
-      <button id="bRand" class="big sq" aria-label="Randomize" title="Randomize the sound (volume untouched)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3"/><circle cx="15.5" cy="8.5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="8.5" cy="15.5" r="1.3"/><circle cx="15.5" cy="15.5" r="1.3"/></svg></button>
+      <button id="bRand" class="big sq" aria-label="Randomize" title="Randomize the sound (volume untouched); with several library slots selected, each one is randomized on its own"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3"/><circle cx="15.5" cy="8.5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="8.5" cy="15.5" r="1.3"/><circle cx="15.5" cy="15.5" r="1.3"/></svg></button>
      </div>
     </div>
     <div class="slots" id="slots"></div>
@@ -756,7 +757,7 @@ $('conn').onclick=function(){connect(false)};
 $('inSel').onchange=$('outSel').onchange=function(){userPick=true;if(acc)bind(true)};
 
 /* ---------- Library ---------- */
-var LIB=load(),sel=0,dragFrom=-1,page=0,PG=32;  /* 128 slots, shown 32 per page */
+var LIB=load(),sel=0,dragFrom=-1,page=0,PG=32,ms={},anc=0,dragSet=null,overEls=[];  /* ms: extra selected slots (Shift), anc: where a Shift range starts */  /* 128 slots, shown 32 per page */
 var mSel=null,mSeq=false,pa=null,mA=null,mB=null,mT=0,mAnim=0;  /* morph: patch being picked ('A' / 'B' / none), true when picking A then B from MORPH, pending A, A, B, slider position */
 /* undo / redo (Ctrl or Cmd + Z, add Shift to redo): snapshots of the sound and the library */
 var undoS=[],redoS=[],lastTag=null,lastT=0;
@@ -767,7 +768,7 @@ function pushUndo(tag){
   lastTag=tag||null;lastT=now;undoS.push(snap());if(undoS.length>100)undoS.shift();redoS.length=0;
 }
 function restoreSnap(x){
-  LIB=JSON.parse(x.L);sel=x.sel;page=Math.floor(sel/PG);persist();applyAll(x.S,true);slots();
+  LIB=JSON.parse(x.L);sel=x.sel;ms={};anc=sel;page=Math.floor(sel/PG);persist();applyAll(x.S,true);slots();
   showName(LIB[sel]?LIB[sel].n.toUpperCase():curName);
 }
 function stepHistory(from,to){if(!from.length)return;to.push(snap());restoreSnap(from.pop());lastTag=null}
@@ -784,21 +785,104 @@ function moveSlot(a,b){
   if(a<0||a===b)return;
   pushUndo();
   var tmp=LIB[a];LIB[a]=LIB[b];LIB[b]=tmp;
-  if(sel===a)sel=b;else if(sel===b)sel=a;  /* the selection follows its patch */
+  ms={};if(sel===a)sel=b;else if(sel===b)sel=a;  /* the selection follows its patch */
   persist();slots();
 }
 /* copy the patch in slot a into slot b (replaces whatever was there) */
 function dupSlot(a,b){
   if(a<0||a===b||!LIB[a])return;
   pushUndo();
-  LIB[b]=copy(LIB[a]);sel=b;persist();slots();
+  LIB[b]=copy(LIB[a]);ms={};sel=anc=b;persist();slots();
+}
+/* the library as a grid: row / column of a slot as laid out on screen (pages stack, so rows keep counting across pages) */
+function gridPos(i){var c=slotCols(),rpp=Math.ceil(PG/c),p=Math.floor(i/PG),k=i-p*PG;return{r:p*rpp+Math.floor(k/c),c:k%c}}
+function gridAt(r,col){var c=slotCols(),rpp=Math.ceil(PG/c),p=Math.floor(r/rpp),k=(r-p*rpp)*c+col;if(r<0||col<0||col>=c||k>=PG)return-1;var i=p*PG+k;return i<LIB.length?i:-1}
+/* every slot inside the rectangle spanned by two slots, as {index:true} */
+function rectSet(a,b){
+  var A=gridPos(a),B=gridPos(b),o={};
+  for(var r=Math.min(A.r,B.r);r<=Math.max(A.r,B.r);r++)for(var k=Math.min(A.c,B.c);k<=Math.max(A.c,B.c);k++){var x=gridAt(r,k);if(x>=0)o[x]=true}
+  return o;
+}
+/* the whole selection as {index:true}, always including the active slot */
+function selSet(){var o={};for(var k in ms)if(ms[k])o[k]=true;o[sel]=true;return o}
+/* Ctrl/Cmd+click adds or removes one slot without touching the others; Ctrl/Cmd+Shift+click adds the range from the last click */
+function toggleSel(i,range){
+  var set=selSet();
+  if(range){var rs=rectSet(anc,i);for(var j in rs)set[j]=true;sel=i}
+  else if(set[i]){
+    if(Object.keys(set).length<2)return;  /* keep at least one slot selected */
+    delete set[i];
+    if(sel===i){var r=Object.keys(set).map(Number);sel=r[r.length-1]}
+  }else{set[i]=true;sel=i}
+  ms=set;anc=i;markSel();showMsg(Object.keys(set).length+' SELECTED');
+}
+/* where a dragged selection would land if dropped on slot i, or null when it doesn't fit */
+function dropTargets(i){
+  var l=Object.keys(dragSet).map(Number).filter(function(j){return LIB[j]}).sort(function(x,y){return x-y}),off=i-dragFrom,T=l.map(function(j){return j+off});
+  if(T[0]<0||T[T.length-1]>=LIB.length)return null;
+  return{l:l,T:T,off:off};
+}
+/* live preview while dragging: the target slots light up and show the names of the patches that would land there */
+function clearOver(){
+  overEls.forEach(function(x){x.c.className=x.cn;if(x.st===null)x.c.removeAttribute('style');else x.c.setAttribute('style',x.st);x.sp.textContent=x.tx});
+  overEls=[];
+}
+function paintOver(tg){
+  clearOver();if(!tg.off)return;
+  var box=$('slots');
+  tg.T.forEach(function(t,k){
+    var c=box.children[t-page*PG];if(!c||t<page*PG||t>=page*PG+PG)return;
+    var sp=c.querySelector('span'),p=LIB[tg.l[k]];if(!sp)return;
+    overEls.push({c:c,sp:sp,cn:c.className,st:c.getAttribute('style'),tx:sp.textContent});
+    c.classList.remove('empty','col');c.classList.add('over');
+    if(p.c){c.classList.add('col');c.style.setProperty('--sc',p.c)}else c.style.removeProperty('--sc');
+    sp.textContent=p.n;
+  });
+}
+/* the drag picture: all selected patches laid out like on the grid, with the grabbed one under the pointer */
+function dragGhost(e,d,a){
+  if(!e.dataTransfer.setDragImage)return;
+  var l=Object.keys(dragSet).map(Number).filter(function(j){return LIB[j]}),P=l.map(gridPos),
+      r0=Math.min.apply(0,P.map(function(p){return p.r})),c0=Math.min.apply(0,P.map(function(p){return p.c})),
+      r1=Math.max.apply(0,P.map(function(p){return p.r})),c1=Math.max.apply(0,P.map(function(p){return p.c})),
+      rc=d.getBoundingClientRect(),w=rc.width,h=rc.height,gap=parseFloat(getComputedStyle($('slots')).columnGap)||6,
+      g=el('div'),A=gridPos(a);
+  g.style.cssText='position:fixed;left:-3000px;top:0;pointer-events:none;width:'+((c1-c0+1)*(w+gap)-gap)+'px;height:'+((r1-r0+1)*(h+gap)-gap)+'px';
+  l.forEach(function(j,k){
+    var s=LIB[j],q=el('div','slot'+(s.c?' col':'')+(j===a?' on':' ms')),b=el('b'),sp=el('span');
+    if(s.c)q.style.setProperty('--sc',s.c);
+    q.style.cssText+=';position:absolute;left:'+((P[k].c-c0)*(w+gap))+'px;top:'+((P[k].r-r0)*(h+gap))+'px;width:'+w+'px;height:'+h+'px;box-sizing:border-box';
+    b.textContent=j+1;sp.textContent=s.n;q.appendChild(b);q.appendChild(sp);g.appendChild(q);
+  });
+  document.body.appendChild(g);
+  e.dataTransfer.setDragImage(g,(A.c-c0)*(w+gap)+e.clientX-rc.left,(A.r-r0)*(h+gap)+e.clientY-rc.top);
+  setTimeout(function(){g.remove()},0);
+}
+/* drop a multi-selection: every patch keeps its distance from the dragged one. l = filled selected slots (sorted), a = the slot that was grabbed, off = drop slot minus a.
+   Move: patches already sitting on the targets go to the slots the batch left behind. Alt/Option: copies replace whatever is on the targets. */
+function batchDrop(l,a,off,dup){
+  if(!off)return;
+  var T=l.map(function(j){return j+off});
+  if(T[0]<0||T[T.length-1]>=LIB.length){showMsg("DOESN'T FIT");return}
+  pushUndo();
+  var old=LIB.slice(),inM={},inT={};
+  l.forEach(function(j){inM[j]=1});T.forEach(function(t){inT[t]=1});
+  if(dup){l.forEach(function(j,k){LIB[T[k]]=copy(old[j])})}
+  else{
+    var disp=T.filter(function(t){return!inM[t]}),vac=l.filter(function(j){return!inT[j]});
+    l.forEach(function(j,k){LIB[T[k]]=old[j]});
+    disp.forEach(function(t,k){LIB[vac[k]]=old[t]});
+  }
+  var o={};T.forEach(function(t){o[t]=true});
+  var k=l.indexOf(a);sel=anc=k>=0?T[k]:T[T.length-1];ms=o;
+  persist();slots();showMsg((dup?'COPIED ':'MOVED ')+l.length);
 }
 function endDrag(){
-  dragFrom=-1;document.body.classList.remove('sorting');
+  clearOver();dragFrom=-1;dragSet=null;document.body.classList.remove('sorting');
   var box=$('slots');box.classList.remove('sorting');
   [].forEach.call(box.children,function(c){c.classList.remove('drag','over')});
 }
-function markSel(){[].forEach.call($('slots').children,function(c,j){c.classList.toggle('on',j+page*PG===sel)});updLine()}
+function markSel(){[].forEach.call($('slots').children,function(c,j){var x=j+page*PG;c.classList.toggle('on',x===sel);c.classList.toggle('ms',!!ms[x]&&x!==sel)});updLine()}
 /* double-click a patch to rename it: Enter or clicking away saves, Esc cancels */
 function rename(i,d){
   var s=LIB[i],sp=d.querySelector('span');
@@ -822,11 +906,11 @@ function rename(i,d){
 }
 function slotTip(s){return [s.a?'by '+s.a:'',s.d||''].filter(Boolean).join('\n')}
 function slots(){
-  hideTip();
+  hideTip();overEls=[];
   var box=$('slots'),n=0;box.innerHTML='';
   LIB.slice(page*PG,page*PG+PG).forEach(function(s,j){
     var i=page*PG+j;
-    var d=el('div','slot'+(s?'':' empty')+(i===sel?' on':'')+(s&&s.c?' col':'')),b=el('b'),sp=el('span');
+    var d=el('div','slot'+(s?'':' empty')+(i===sel?' on':'')+(ms[i]&&i!==sel?' ms':'')+(s&&s.c?' col':'')),b=el('b'),sp=el('span');
     if(s&&s.c)d.style.setProperty('--sc',s.c);
     if(s&&(s.a||s.d)){  /* author + description card after the pointer rests on the patch for 2 s */
       d.setAttribute('data-tip',slotTip(s));
@@ -836,32 +920,42 @@ function slots(){
     d.oncontextmenu=function(e){if(!LIB[i])return;e.preventDefault();openPal(i,e.clientX,e.clientY)};
     b.textContent=i+1;sp.textContent=s?s.n:'empty';
     d.appendChild(b);d.appendChild(sp);d.appendChild(el('em','mb'));
-    d.onclick=function(){
+    d.onclick=function(e){
       if(mSel&&!LIB[i])return;  /* while picking A / B only filled slots count */
       if(mSel==='B'){morphPick(LIB[i]);return}  /* B is only assigned: the sound stays as it is */
-      if(LIB[i])pushUndo();sel=i;markSel();if(LIB[i]){applyAll(LIB[i].p,true);showName(LIB[i].n.toUpperCase())}
+      if(e&&(e.metaKey||e.ctrlKey)&&!mSel){toggleSel(i,e.shiftKey);return}  /* Ctrl/Cmd+click: pick slots one by one */
+      if(e&&e.shiftKey&&!mSel){goTo(i,true);return}  /* Shift+click: select the range from the last plain click */
+      if(LIB[i])pushUndo();ms={};anc=i;sel=i;markSel();if(LIB[i]){applyAll(LIB[i].p,true);showName(LIB[i].n.toUpperCase())}
       if(mSel==='A')morphPick(LIB[i]);
     };
     d.ondblclick=function(){rename(i,d)};
     if(s){
       d.draggable=true;
       d.addEventListener('dragstart',function(e){
-        dragFrom=i;
+        dragFrom=i;var st=selSet();dragSet=(st[i]&&Object.keys(st).filter(function(k){return LIB[k]}).length>1)?st:null;  /* grabbing a selected patch drags the whole selection */
         e.dataTransfer.effectAllowed='copyMove';
         try{e.dataTransfer.setData('application/x-reface-slot',String(i))}catch(x){}
-        setTimeout(function(){d.classList.add('drag');box.classList.add('sorting');document.body.classList.add('sorting')},0);
+        if(dragSet)dragGhost(e,d,i);
+        setTimeout(function(){[].forEach.call(box.children,function(c,j){if(dragSet?dragSet[j+page*PG]:c===d)c.classList.add('drag')});box.classList.add('sorting');document.body.classList.add('sorting')},0);
       });
       d.addEventListener('dragend',endDrag);
     }
     d.addEventListener('dragover',function(e){
       if(dragFrom<0)return;
+      if(dragSet){  /* a selection is being dragged: preview all its landing slots, refuse the drop when it would run off the library */
+        var tg=dropTargets(i);
+        if(!tg){clearOver();e.dataTransfer.dropEffect='none';return}
+        e.preventDefault();e.dataTransfer.dropEffect=e.altKey?'copy':'move';paintOver(tg);return;
+      }
       e.preventDefault();e.dataTransfer.dropEffect=e.altKey?'copy':'move';d.classList.add('over');
     });
-    d.addEventListener('dragleave',function(){d.classList.remove('over')});
+    d.addEventListener('dragleave',function(){d.classList.remove('over');if(dragSet)clearOver()});
     d.addEventListener('drop',function(e){
       if(dragFrom<0)return;
       e.preventDefault();
-      var a=dragFrom,dup=e.altKey;endDrag();
+      var a=dragFrom,dup=e.altKey,set=dragSet;endDrag();
+      var l=set?Object.keys(set).map(Number).filter(function(j){return LIB[j]}).sort(function(x,y){return x-y}):[];
+      if(l.length>1){batchDrop(l,a,i-a,dup);return}  /* several patches selected: move / copy them together */
       if(dup)dupSlot(a,i);else moveSlot(a,i);  /* Option (Mac) / Alt (Windows) held = duplicate */
     });
     box.appendChild(d);
@@ -1051,7 +1145,8 @@ window.addEventListener('scroll',closePal,true);
 window.addEventListener('resize',closePal);
 function flash(id,cls){var b=$(id);clearTimeout(b._t);b.classList.add(cls);b._t=setTimeout(function(){b.classList.remove(cls)},700)}
 function doSave(){pushUndo();LIB[sel]={n:(LIB[sel]&&LIB[sel].n)||('Patch '+(sel+1)),p:copy(S),c:LIB[sel]&&LIB[sel].c||undefined,a:LIB[sel]&&LIB[sel].a||undefined,d:LIB[sel]&&LIB[sel].d||undefined};persist();slots();flash('bSave','ok')}
-function doClear(){if(!LIB[sel])return;pushUndo();LIB[sel]=null;persist();slots();flash('bDel','bad')}  /* the colour goes with the patch */
+function selList(){return Object.keys(selSet()).map(Number).filter(function(i){return LIB[i]}).sort(function(x,y){return x-y})}
+function doClear(){var l=selList();if(!l.length)return;pushUndo();l.forEach(function(i){LIB[i]=null});persist();slots();flash('bDel','bad')}  /* the colour goes with the patch */
 $('bSave').onclick=doSave;
 $('bDel').onclick=doClear;
 /* Reset: every fader goes back to where the hardware slider was last seen */
@@ -1071,14 +1166,64 @@ document.addEventListener('keydown',function(e){
   if(k==='s'||k==='S'){e.preventDefault();doSave()}
   else if(k==='c'||k==='C'||k==='Delete'||k==='Backspace'){e.preventDefault();doClear()}
 });
+/* arrow keys walk the library (left/right one slot, up/down one row); Shift extends a selection from where it started, without loading patches into the synth */
+function slotCols(){return Math.max(1,getComputedStyle($('slots')).gridTemplateColumns.split(' ').length)}
+function goTo(i,extend){
+  i=Math.max(0,Math.min(LIB.length-1,i));
+  var np=Math.floor(i/PG),moved=np!==page;
+  if(extend){
+    ms=rectSet(anc,i);sel=i;  /* Shift selects the block of the grid between the start slot and this one */
+    if(moved)setPage(np);else markSel();
+    showMsg(Object.keys(ms).length+' SELECTED');return;
+  }
+  ms={};anc=i;
+  if(LIB[i])pushUndo('nav');
+  sel=i;
+  if(moved)setPage(np);else markSel();
+  if(LIB[i]){applyAll(LIB[i].p,true);showName(LIB[i].n.toUpperCase())}
+}
+document.addEventListener('keydown',function(e){
+  var c=slotCols(),d={ArrowLeft:-1,ArrowRight:1,ArrowUp:-c,ArrowDown:c}[e.key];
+  if(d===undefined||e.metaKey||e.ctrlKey||e.altKey)return;
+  var t=e.target;
+  if(t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable||(t.closest&&t.closest('.mtrack'))))return;
+  if(mSel||!pal.hidden||document.querySelector('.ddmenu:not([hidden])'))return;
+  e.preventDefault();
+  var tg=Math.max(0,Math.min(LIB.length-1,sel+d));
+  if(e.shiftKey&&(d===1||d===-1)&&gridPos(tg).r!==gridPos(sel).r)return;  /* Shift+left/right stops at the edge of its row */
+  goTo(tg,e.shiftKey);
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&Object.keys(selSet()).length>1){ms={};anc=sel;markSel()}});
+/* Ctrl/Cmd+A selects every patch on this page */
+document.addEventListener('keydown',function(e){
+  if(!(e.ctrlKey||e.metaKey)||e.altKey||e.shiftKey||String(e.key).toLowerCase()!=='a')return;
+  var t=e.target;if(t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable))return;
+  if(mSel||!pal.hidden)return;
+  e.preventDefault();var o={};
+  for(var j=page*PG;j<page*PG+PG;j++)if(LIB[j])o[j]=true;
+  if(!Object.keys(o).length)return;
+  if(!o[sel])sel=+Object.keys(o)[0];
+  ms=o;anc=sel;markSel();showMsg(Object.keys(o).length+' SELECTED');
+});
 $('bInit').onclick=function(){pushUndo();var p=copy(INIT);p.vol=S.vol;applyAll(p,true);showName('INIT PATCH')};
-$('bRand').onclick=function(){
-  pushUndo();
-  var r=function(a,b){return a+Math.floor(Math.random()*(b-a+1))},p=copy(S);
+function rndPatch(base){
+  var r=function(a,b){return a+Math.floor(Math.random()*(b-a+1))},p=copy(base);
   p.osc=r(0,4);p.lfoA=r(0,4);p.fx=r(0,4);p.por=Math.random()<.7?0:r(1,90);
   ['lfoD','lfoS','tex','mod','bal','A','D','S','R','fxD','fxR'].forEach(function(k){p[k]=r(0,127)});
   p.cut=r(40,127);p.res=r(0,80);  /* keep resonance moderate and cutoff off the floor: speaker safety */
-  applyAll(p,true);
+  return p;
+}
+$('bRand').onclick=function(){
+  if(Object.keys(selSet()).length>1){  /* several slots selected: every filled one gets its own random settings, saved in place (Ctrl/Cmd+Z undoes) */
+    var l=selList();
+    if(!l.length){showMsg('NOTHING TO RANDOMIZE');return}
+    pushUndo();
+    l.forEach(function(i){LIB[i].p=rndPatch(LIB[i].p)});
+    persist();slots();
+    if(LIB[sel]){applyAll(LIB[sel].p,true);showName(LIB[sel].n.toUpperCase())}
+    showMsg(l.length+' RANDOMIZED');return;
+  }
+  pushUndo();applyAll(rndPatch(S),true);
 };
 function dl(name,data,type){
   var a=el('a');a.href=URL.createObjectURL(new Blob([data],{type:type}));a.download=name;
@@ -1308,14 +1453,15 @@ function layout(){
     root.style.setProperty('--k',Math.max(.9,Math.min(1.5,(synth.clientWidth-6)/nat)).toFixed(3));
   }
   root.style.removeProperty('--trh');root.style.removeProperty('--kbh');
-  if(wide){  /* taller faders, then fit the window with no scrolling: shrink the keyboard first (down to 90px), then the faders (down to 110px) */
-    var k=parseFloat(root.style.getPropertyValue('--k'))||1,trh=132*k*1.8,kbh=150*k*1.5;
-    root.style.setProperty('--trh',trh+'px');root.style.setProperty('--kbh',kbh+'px');
+  /* The CP editor gives its panel exactly this height (17.2% of its width) and its keyboard 15% of the width, so the two line up.
+     Fader height is solved so the whole panel hits it; if the window is still too short, only the keyboard shrinks (down to 90px). */
+  if(wide){
+    var W=synth.offsetWidth,H=Math.round(W*.172),kbh=Math.round(W*.15),trh=132*(parseFloat(root.style.getPropertyValue('--k'))||1)*1.55;
+    root.style.setProperty('--kbh',kbh+'px');
+    for(var q=0;q<2;q++){root.style.setProperty('--trh',trh+'px');trh=Math.max(60,trh+H-synth.offsetHeight)}
+    root.style.setProperty('--trh',trh+'px');
     var over=document.documentElement.scrollHeight-window.innerHeight;
-    if(over>0){
-      var cut=Math.min(over,kbh-90);kbh-=cut;over-=cut;root.style.setProperty('--kbh',kbh+'px');
-      if(over>0){var c2=Math.min(over,trh-110);trh-=c2;root.style.setProperty('--trh',trh+'px')}
-    }
+    if(over>0){kbh-=Math.min(over,kbh-90);root.style.setProperty('--kbh',kbh+'px')}
   }
   if(nk!==KN){KN=nk;kwin=wide?36:48;drawKeys()}
 }
@@ -1335,9 +1481,9 @@ connect(true);  /* look for a Reface CS straight away
 </style>
 <div class="nbb" id="nbb" aria-label="Site links"><a href="../" id="nbbBack">&larr; Back to Editors</a><a class="k" href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener">&#9749; Support on Ko-fi</a></div>
 <script>
-(function(){var b=document.getElementById('nbb'),t=0,near=false;
+(function(){var b=document.getElementById('nbb'),t=0,near=false,hd,hb;
 function set(on){clearTimeout(t);if(on){b.classList.add('on')}else{t=setTimeout(function(){b.classList.remove('on')},350)}}
-addEventListener('mousemove',function(e){var inB=b.contains(e.target),zone=e.clientX<150&&e.clientY<90;near=zone||inB;set(near||(b.classList.contains('on')&&inB))},{passive:true});
+addEventListener('mousemove',function(e){var inB=b.contains(e.target),hb=(e.clientY<200&&(hd=document.querySelector('.head')))?hd.getBoundingClientRect().bottom+8:90;zone=e.clientY<hb;near=zone||inB;set(near||(b.classList.contains('on')&&inB))},{passive:true});
 addEventListener('pointerdown',function(e){if(e.pointerType==='touch'&&e.clientX<90&&e.clientY<70){set(true);setTimeout(function(){set(false)},4000)}},{passive:true});
 document.addEventListener('mouseleave',function(){set(false)});
 })();
@@ -1358,7 +1504,7 @@ document.addEventListener('mouseleave',function(){set(false)});
  if(local||(OFFICIAL_HOSTS.indexOf(h)>-1&&location.pathname.indexOf(OFFICIAL_PATH)===0))return;
  addEventListener('DOMContentLoaded',function(){
   var d=document.createElement('div');d.id='rcsUnof';d.setAttribute('role','note');
-  d.innerHTML='<span>This is an unofficial copy of the Reface CS Editor by @capmisteri. Get the original at <a href="'+OFFICIAL_URL+'" rel="noopener">'+OFFICIAL_URL.replace('https://','')+'</a>. If it helps you, <a href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener">&#9749; support the author on Ko-fi</a>.</span><button type="button" aria-label="Dismiss">✕</button>';
+  d.innerHTML='<span>This is an unofficial copy of the Reface CS Editor by @capmisteri. Get the original at <a href="'+OFFICIAL_URL+'" rel="noopener">'+OFFICIAL_URL.replace('https://','')+'</a>.</span><button type="button" aria-label="Dismiss">✕</button>';
   d.querySelector('button').onclick=function(){d.remove()};document.body.appendChild(d);
  });
 })();

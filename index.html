@@ -102,7 +102,7 @@
     position:absolute;top:44px;right:22px;z-index:2;
     font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
     padding:4px 10px;border-radius:99px;
-    background:#0b0c11cc;color:var(--text);border:1px solid var(--line);backdrop-filter:blur(4px);
+    background:#0b0c11cc;color:#e8eaf2;border:1px solid var(--line);backdrop-filter:blur(4px);
   }
   .badge.live{background:color-mix(in srgb,var(--a) 22%,#0b0c11);border-color:var(--a);color:var(--a)}
 
@@ -149,7 +149,7 @@
     <div class="grid" id="grid"></div>
   </main>
 
-  <footer>© <span id="yr"></span> · Not affiliated with Korg, Yamaha or Roland. All trademarks belong to their owners.</footer>
+  <footer>© <span id="yr"></span> · Not affiliated with Yamaha. All trademarks belong to their owners.</footer>
 </div>
 
 <script>
@@ -166,25 +166,25 @@ const EDITORS = [
     tags: ["Editor", "Librarian", "Web MIDI"], color: "#4cc9f0", keys: true
   },
   {
-    id: "microkorg", live: false,
-    name: "microKORG Editor", maker: "Korg",
-    href: "soon.html?e=microkorg", path: "soon",
-    desc: "Full voice editor for the microKORG: every parameter, patch librarian and morphing over Web MIDI.",
-    tags: ["Editor", "Librarian", "Web MIDI"], color: "#ff6b57", keys: true
+    id: "reface-cp", live: true,
+    name: "reface CP Editor", maker: "Yamaha",
+    href: "reface-cp/index.html", path: "reface-cp/",
+    desc: "Editor and librarian for the reface CP electric piano: every knob and effect, morphing between patches, arpeggiator and a 128-patch library.",
+    tags: ["Editor", "Librarian", "Web MIDI"], color: "#f2b01e", keys: true
   },
   {
-    id: "sy22", live: false,
-    name: "SY-22 Voice Editor", maker: "Yamaha",
-    href: "soon.html?e=sy22", path: "soon",
-    desc: "Voice editor for the Yamaha SY-22 vector synth: elements, envelopes and the dynamic vector, from your browser.",
-    tags: ["Editor", "Vector synth", "Web MIDI"], color: "#a78bfa", keys: false
+    id: "reface-yc", live: true,
+    name: "reface YC Editor", maker: "Yamaha",
+    href: "reface-yc/index.html", path: "reface-yc/",
+    desc: "Editor and librarian for the reface YC combo organ: drawbars, effects, morphing between patches, arpeggiator and a 128-patch library.",
+    tags: ["Editor", "Librarian", "Web MIDI"], color: "#ff4036", keys: true
   },
   {
-    id: "vg88", live: false,
-    name: "VG-88 Editor", maker: "Roland",
-    href: "soon.html?e=vg88", path: "soon",
-    desc: "Editor for the Roland VG-88 guitar modeling processor: instrument, amp and effects, plus a patch library.",
-    tags: ["Editor", "Guitar", "Web MIDI"], color: "#7ee081", keys: false
+    id: "reface-dx", live: false,
+    name: "reface DX Editor", maker: "Yamaha",
+    href: "soon.html?e=reface-dx", path: "soon",
+    desc: "Editor and librarian for the reface DX FM synth: algorithm picker, drag-to-edit envelopes, operator controls, morphing, arpeggiator and a 128-patch library.",
+    tags: ["Editor", "Librarian", "FM synth", "Web MIDI"], color: "#2fa86b", keys: true
   }
 ];
 
