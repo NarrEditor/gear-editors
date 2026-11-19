@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MIDI Editors Hub</title>
+<title>@capmisteri's Gear Editors</title>
 <meta name="description" content="Free browser-based MIDI editors and librarians for hardware synths. No install, just plug in and open.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@800&display=swap">
 <style>
   :root{
     --bg:#0e0f13; --panel:#161821; --panel2:#1d2030; --line:#2a2e42;
@@ -31,7 +33,13 @@
   /* ---------- sidebar ---------- */
   aside{position:sticky;top:24px;display:flex;flex-direction:column;gap:16px}
   @media (max-width:860px){ aside{position:static} }
-  .brand h1{margin:0 0 6px;font-size:1.7rem;letter-spacing:-.02em;line-height:1.1}
+  .brand h1{margin:0 0 10px;font-size:1.75rem;font-weight:600;letter-spacing:-.02em;line-height:1.12}
+  .brand h1 a.handle{
+    font-family:"Syne",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:800;font-size:2.05rem;letter-spacing:-.035em;text-decoration:none;
+    background:linear-gradient(90deg,#4cc9f0,#f2b01e 38%,#ff4036 68%,#2fa86b);-webkit-background-clip:text;background-clip:text;color:transparent;
+    padding-bottom:2px;transition:filter .15s}
+  .brand h1 a.handle:hover{filter:brightness(1.2) saturate(1.15)}
+  .brand h1 a.handle:focus-visible{outline:2px solid var(--text);outline-offset:4px;border-radius:4px}
   .brand p{margin:0;color:var(--muted);font-size:.95rem}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
   .card h2{margin:0 0 6px;font-size:1rem}
@@ -128,7 +136,7 @@
 
   <aside>
     <div class="brand">
-      <h1>MIDI Editors</h1>
+      <h1><a class="handle" href="https://x.com/capmisteri" target="_blank" rel="noopener">@capmisteri</a>’s<br>Gear Editors.</h1>
       <p>Free, browser-based editors and librarians for hardware synths. No installs, no accounts. Plug in and tweak.</p>
     </div>
 
@@ -141,7 +149,7 @@
     <div class="card">
       <h2>Before you start</h2>
       <p class="status"><span class="dot" id="dot"></span><span id="midiState">Checking Web MIDI support…</span></p>
-      <p class="note" style="margin:10px 0 0">Works best in <b>Chrome</b>, <b>Edge</b> or <b>Opera</b> on desktop. Connect your synth by USB/MIDI interface <b>before</b> opening an editor, and allow MIDI access when the browser asks.</p>
+      <p class="note" style="margin:10px 0 0">Works best in <b>Chrome</b>, <b>Edge</b>, <b>Brave</b> or <b>Opera</b> on desktop. Connect your synth by USB/MIDI interface <b>before</b> opening an editor, and allow MIDI access when the browser asks.</p>
     </div>
   </aside>
 
@@ -149,7 +157,7 @@
     <div class="grid" id="grid"></div>
   </main>
 
-  <footer>© <span id="yr"></span> · Not affiliated with Yamaha. All trademarks belong to their owners.</footer>
+  <footer>© <span id="yr"></span> · Not affiliated with Korg, Yamaha or Roland. All trademarks belong to their owners.</footer>
 </div>
 
 <script>
@@ -185,6 +193,27 @@ const EDITORS = [
     href: "soon.html?e=reface-dx", path: "soon",
     desc: "Editor and librarian for the reface DX FM synth: algorithm picker, drag-to-edit envelopes, operator controls, morphing, arpeggiator and a 128-patch library.",
     tags: ["Editor", "Librarian", "FM synth", "Web MIDI"], color: "#2fa86b", keys: true
+  },
+  {
+    id: "microkorg", live: false,
+    name: "microKORG Editor", maker: "Korg",
+    href: "soon.html?e=microkorg", path: "soon",
+    desc: "Full voice editor for the microKORG: every parameter, patch librarian and morphing over Web MIDI.",
+    tags: ["Editor", "Librarian", "Web MIDI"], color: "#ff6b57", keys: true
+  },
+  {
+    id: "sy22", live: false,
+    name: "SY-22 Voice Editor", maker: "Yamaha",
+    href: "soon.html?e=sy22", path: "soon",
+    desc: "Voice editor for the Yamaha SY-22 vector synth: elements, envelopes and the dynamic vector, from your browser.",
+    tags: ["Editor", "Vector synth", "Web MIDI"], color: "#a78bfa", keys: false
+  },
+  {
+    id: "vg88", live: false,
+    name: "VG-88 Editor", maker: "Roland",
+    href: "soon.html?e=vg88", path: "soon",
+    desc: "Editor for the Roland VG-88 guitar modeling processor: instrument, amp and effects, plus a patch library.",
+    tags: ["Editor", "Guitar", "Web MIDI"], color: "#7ee081", keys: false
   }
 ];
 
