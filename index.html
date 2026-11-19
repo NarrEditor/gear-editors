@@ -27,15 +27,16 @@
   }
   a{color:inherit}
   .wrap{max-width:1180px;margin:0 auto;padding:32px 20px 48px;
-        display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}
+        display:grid;grid-template-columns:300px 1fr;gap:28px 64px;align-items:start}
   @media (max-width:860px){ .wrap{grid-template-columns:1fr} }
 
   /* ---------- sidebar ---------- */
   aside{position:sticky;top:24px;display:flex;flex-direction:column;gap:16px}
   @media (max-width:860px){ aside{position:static} }
-  .brand h1{margin:0 0 10px;font-size:1.75rem;font-weight:600;letter-spacing:-.02em;line-height:1.12}
+  .brand{container-type:inline-size;min-width:0}
+  .brand h1{margin:0 0 10px;font-size:1.6rem;font-weight:600;letter-spacing:-.02em;line-height:1.12;white-space:nowrap}
   .brand h1 a.handle{
-    font-family:"Syne",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:800;font-size:2.05rem;letter-spacing:-.035em;text-decoration:none;
+    font-family:"Syne",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:800;font-size:1.55rem;font-size:min(2.05rem,8.4cqw);letter-spacing:-.035em;text-decoration:none;
     background:linear-gradient(90deg,#4cc9f0,#f2b01e 38%,#ff4036 68%,#2fa86b);-webkit-background-clip:text;background-clip:text;color:transparent;
     padding-bottom:2px;transition:filter .15s}
   .brand h1 a.handle:hover{filter:brightness(1.2) saturate(1.15)}
