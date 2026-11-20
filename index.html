@@ -128,6 +128,22 @@
   .win.soon .panel{filter:saturate(.55) brightness(.85)}
   .win.soon .open{color:var(--muted)}
 
+  /* ---------- feedback box + dialog ---------- */
+  .btn-msg{display:inline-flex;align-items:center;gap:8px;width:100%;justify-content:center;cursor:pointer;font:inherit;font-weight:700;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+  .btn-msg:hover{border-color:var(--accent)}
+  dialog.fb{width:min(480px,calc(100vw - 32px));border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);color:var(--text);padding:22px;box-shadow:0 30px 80px -20px #000a}
+  dialog.fb::backdrop{background:#0009;backdrop-filter:blur(3px)}
+  dialog.fb h2{margin:0 0 4px;font-size:1.1rem}
+  dialog.fb p{margin:0 0 14px;color:var(--muted);font-size:.88rem}
+  dialog.fb label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:12px 0 5px}
+  dialog.fb input,dialog.fb textarea,dialog.fb select{width:100%;font:inherit;font-size:.95rem;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+  dialog.fb textarea{min-height:140px;resize:vertical}
+  dialog.fb input:focus,dialog.fb textarea:focus,dialog.fb select:focus{outline:2px solid var(--accent);outline-offset:1px}
+  dialog.fb .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+  dialog.fb .acts button{font:inherit;font-weight:700;padding:9px 16px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
+  dialog.fb .acts .go{background:var(--accent);border-color:var(--accent);color:#1a1405}
+  dialog.fb .hint{margin:12px 0 0;font-size:.78rem}
+
   footer{grid-column:1/-1;text-align:center;color:var(--muted);font-size:.82rem;margin-top:8px}
   @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
 </style>
@@ -152,6 +168,11 @@
       <p class="status"><span class="dot" id="dot"></span><span id="midiState">Checking Web MIDI support…</span></p>
       <p class="note" style="margin:10px 0 0">Works best in <b>Chrome</b>, <b>Edge</b>, <b>Brave</b> or <b>Opera</b> on desktop. Connect your synth by USB/MIDI interface <b>before</b> opening an editor, and allow MIDI access when the browser asks.</p>
     </div>
+    <div class="card">
+      <h2>💬 Requests &amp; fixes</h2>
+      <p>Found a bug, or want a feature or a new editor? Send me a note.</p>
+      <button type="button" class="btn-msg" id="fbOpen">✉️ Write to me</button>
+    </div>
   </aside>
 
   <main>
@@ -160,6 +181,29 @@
 
   <footer>© <span id="yr"></span> · Not affiliated with Korg, Yamaha or Roland. All trademarks belong to their owners.</footer>
 </div>
+
+<dialog class="fb" id="fbDlg" aria-labelledby="fbT">
+  <form method="dialog" id="fbForm">
+    <h2 id="fbT">Requests &amp; fixes</h2>
+    <p>Tell me what to fix or add. Pressing Send opens your email app with the message ready to go.</p>
+    <label for="fbType">Type</label>
+    <select id="fbType">
+      <option>Bug / fix</option>
+      <option>Feature request</option>
+      <option>New editor request</option>
+      <option>Other</option>
+    </select>
+    <label for="fbSub">Subject</label>
+    <input id="fbSub" maxlength="120" placeholder="e.g. DX: envelope graph jumps on touch" required>
+    <label for="fbMsg">Message</label>
+    <textarea id="fbMsg" placeholder="What happened, which editor, and your browser/device if it's a bug." required></textarea>
+    <div class="acts">
+      <button type="button" id="fbCancel">Cancel</button>
+      <button type="submit" class="go">Send</button>
+    </div>
+    <p class="hint" id="fbHint" hidden>If nothing opened, your device has no email app set up. <a href="#" id="fbCopy">Copy the message</a> and send it from your usual mail.</p>
+  </form>
+</dialog>
 
 <script>
 /* ============ EDIT THIS LIST ============
@@ -252,6 +296,31 @@ EDITORS.forEach((e, idx) => {
     </div>`;
   grid.appendChild(a);
 });
+
+/* ---------- feedback dialog (address is not shown anywhere on the page) ---------- */
+(function(){
+  var d=document.getElementById("fbDlg"),f=document.getElementById("fbForm"),
+      sub=document.getElementById("fbSub"),msg=document.getElementById("fbMsg"),
+      typ=document.getElementById("fbType"),hint=document.getElementById("fbHint");
+  var P=["bmFyci5z","eW50aGVk","aXRvckBw","cm90b24u","bWU="];
+  function to(){return atob(P.join(""))}
+  function text(){return "["+typ.value+"] "+sub.value.trim()+"\n\n"+msg.value.trim()}
+  document.getElementById("fbOpen").onclick=function(){hint.hidden=true;d.showModal();sub.focus()};
+  document.getElementById("fbCancel").onclick=function(){d.close()};
+  d.addEventListener("click",function(e){if(e.target===d)d.close()});
+  f.addEventListener("submit",function(e){
+    e.preventDefault();
+    var s="[Gear Editors] "+typ.value+": "+sub.value.trim();
+    var b=msg.value.trim()+"\n\n--\nSent from the Gear Editors hub \u00B7 "+navigator.userAgent;
+    hint.hidden=false;
+    location.href="mailto:"+to()+"?subject="+encodeURIComponent(s)+"&body="+encodeURIComponent(b);
+  });
+  document.getElementById("fbCopy").onclick=function(e){
+    e.preventDefault();
+    var t=text(),el=e.target;
+    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){el.textContent="Copied"},function(){msg.select();el.textContent="Select and copy the message above"});
+  };
+})();
 
 /* ---------- Web MIDI support check ---------- */
 const dot = document.getElementById("dot"), st = document.getElementById("midiState");
