@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@capmisteri's Gear Editors</title>
+<meta name="description" content="Free browser-based MIDI editors and librarians for hardware synths. No install, just plug in and open.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@800&display=swap">
+<style>
+  :root{
+    --bg:#0e0f13; --panel:#161821; --panel2:#1d2030; --line:#2a2e42;
+    --text:#e8eaf2; --muted:#8c92aa; --accent:#ffb347;
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f3f2ee; --panel:#fff; --panel2:#f0eee8; --line:#dcd8cc; --text:#1c1d24; --muted:#6b6f80; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background-image:radial-gradient(circle at 1px 1px, color-mix(in srgb,var(--text) 7%,transparent) 1px, transparent 0);
+    background-size:22px 22px;
+    min-height:100vh;
+  }
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 20px 48px;
+        display:grid;grid-template-columns:300px 1fr;gap:28px 64px;align-items:start}
+  @media (max-width:860px){ .wrap{grid-template-columns:1fr} }
+
+  /* ---------- sidebar ---------- */
+  aside{position:sticky;top:24px;display:flex;flex-direction:column;gap:16px}
+  @media (max-width:860px){ aside{position:static} }
+  .brand{container-type:inline-size;min-width:0}
+  .brand h1{margin:0 0 10px;font-size:1.6rem;font-weight:600;letter-spacing:-.02em;line-height:1.12;white-space:nowrap}
+  .brand h1 a.handle{
+    font-family:"Syne",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:800;font-size:1.55rem;font-size:min(2.05rem,8.4cqw);letter-spacing:-.035em;text-decoration:none;
+    background:linear-gradient(90deg,#4cc9f0,#f2b01e 38%,#ff4036 68%,#2fa86b);-webkit-background-clip:text;background-clip:text;color:transparent;
+    padding-bottom:2px;transition:filter .15s}
+  .brand h1 a.handle:hover{filter:brightness(1.2) saturate(1.15)}
+  .brand h1 a.handle:focus-visible{outline:2px solid var(--text);outline-offset:4px;border-radius:4px}
+  .brand p{margin:0;color:var(--muted);font-size:.95rem}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .card h2{margin:0 0 6px;font-size:1rem}
+  .card p{margin:0 0 14px;color:var(--muted);font-size:.9rem}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;justify-content:center;
+    padding:11px 16px;border-radius:10px;font-weight:700;text-decoration:none;
+    border:0;cursor:pointer;font-size:.95rem;transition:transform .12s, filter .12s;
+  }
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+  .btn-kofi{background:#ff5e5b;color:#fff;width:100%}
+  .note{font-size:.82rem;color:var(--muted)}
+  .note b{color:var(--text)}
+  .status{display:flex;align-items:center;gap:8px;font-size:.85rem}
+  .dot{width:9px;height:9px;border-radius:50%;background:#888}
+  .dot.ok{background:#4ade80;box-shadow:0 0 8px #4ade80}
+  .dot.bad{background:#f87171}
+
+  /* ---------- editor windows ---------- */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media (max-width:620px){ .grid{grid-template-columns:1fr} }
+
+  .win{
+    --a:var(--accent);
+    display:flex;flex-direction:column;text-decoration:none;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;transition:transform .18s, box-shadow .18s, border-color .18s;
+    position:relative;
+  }
+  .win:hover,.win:focus-visible{
+    transform:translateY(-5px);
+    border-color:var(--a);
+    box-shadow:0 14px 34px -12px color-mix(in srgb,var(--a) 55%,transparent);
+    outline:none;
+  }
+  .bar{display:flex;align-items:center;gap:7px;padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}
+  .bar i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
+  .win:hover .bar i:nth-child(1){background:#f87171}
+  .win:hover .bar i:nth-child(2){background:#fbbf24}
+  .win:hover .bar i:nth-child(3){background:#4ade80}
+  .bar span{margin-left:auto;font-size:.72rem;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+
+  /* faux synth panel */
+  .panel{
+    height:120px;margin:14px 14px 0;border-radius:10px;
+    background:linear-gradient(180deg,#232638,#171925);
+    border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-around;padding:0 10px;
+    position:relative;overflow:hidden;
+  }
+  .panel::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--a)}
+  .knob{
+    width:34px;height:34px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#4a4f6b,#20222f);
+    border:2px solid #0d0e14;position:relative;
+    transform:rotate(var(--r,0deg));transition:transform .6s cubic-bezier(.3,1.4,.5,1);
+  }
+  .knob::after{content:"";position:absolute;left:50%;top:3px;width:3px;height:11px;margin-left:-1.5px;border-radius:2px;background:var(--a)}
+  .win:hover .knob{transform:rotate(var(--r2,0deg))}
+  .keys{position:absolute;left:10px;right:10px;bottom:8px;height:20px;display:flex;gap:2px}
+  .keys b{flex:1;background:#d9dbe6;border-radius:0 0 3px 3px}
+  .keys b.k{background:#111;transform:translateY(-1px)}
+  .win:hover .keys b.lit{background:var(--a)}
+  .led{position:absolute;right:10px;top:10px;width:7px;height:7px;border-radius:50%;background:#444}
+  .win:hover .led{background:var(--a);box-shadow:0 0 8px var(--a)}
+
+  .badge{
+    position:absolute;top:44px;right:22px;z-index:2;
+    font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    padding:4px 10px;border-radius:99px;
+    background:#0b0c11cc;color:#e8eaf2;border:1px solid var(--line);backdrop-filter:blur(4px);
+  }
+  .badge.live{background:color-mix(in srgb,var(--a) 22%,#0b0c11);border-color:var(--a);color:var(--a)}
+
+  .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .maker{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--a);font-weight:700}
+  .body h3{margin:0;font-size:1.2rem;letter-spacing:-.01em}
+  .body p{margin:0;color:var(--muted);font-size:.9rem;flex:1}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tags span{font-size:.72rem;padding:2px 8px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+  .open{margin-top:6px;font-weight:700;font-size:.9rem;color:var(--a);display:flex;align-items:center;gap:6px}
+  .open::after{content:"→";transition:transform .15s}
+  .win:hover .open::after{transform:translateX(5px)}
+
+  .win.soon .panel{filter:saturate(.55) brightness(.85)}
+  .win.soon .open{color:var(--muted)}
+
+  /* ---------- feedback box + dialog ---------- */
+  .btn-msg{display:inline-flex;align-items:center;gap:8px;width:100%;justify-content:center;cursor:pointer;font:inherit;font-weight:700;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}
+  .btn-msg:hover{border-color:var(--accent)}
+  dialog.fb{width:min(480px,calc(100vw - 32px));border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);color:var(--text);padding:22px;box-shadow:0 30px 80px -20px #000a}
+  dialog.fb::backdrop{background:#0009;backdrop-filter:blur(3px)}
+  dialog.fb h2{margin:0 0 4px;font-size:1.1rem}
+  dialog.fb p{margin:0 0 14px;color:var(--muted);font-size:.88rem}
+  dialog.fb label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:12px 0 5px}
+  dialog.fb input,dialog.fb textarea,dialog.fb select{width:100%;font:inherit;font-size:.95rem;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+  dialog.fb textarea{min-height:140px;resize:vertical}
+  dialog.fb input:focus,dialog.fb textarea:focus,dialog.fb select:focus{outline:2px solid var(--accent);outline-offset:1px}
+  dialog.fb .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+  dialog.fb .acts button{font:inherit;font-weight:700;padding:9px 16px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
+  dialog.fb .acts .go{background:var(--accent);border-color:var(--accent);color:#1a1405}
+  dialog.fb .hint{margin:12px 0 0;font-size:.78rem}
+
+  footer{grid-column:1/-1;text-align:center;color:var(--muted);font-size:.82rem;margin-top:8px}
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <aside>
+    <div class="brand">
+      <h1><a class="handle" href="https://x.com/capmisteri" target="_blank" rel="noopener">@capmisteri</a>’s<br>Gear Editors.</h1>
+      <p>Free, browser-based editors and librarians for hardware synths. No installs, no accounts. Plug in and tweak.</p>
+    </div>
+
+    <div class="card">
+      <h2>☕ Support the project</h2>
+      <p>These editors are free and made in my spare time. If one saved you some menu-diving, a coffee on Ko-fi helps keep them updated and speeds up the next ones.</p>
+      <a class="btn btn-kofi" href="https://ko-fi.com/capmisteri" target="_blank" rel="noopener">☕ Support on Ko-fi</a>
+    </div>
+
+    <div class="card">
+      <h2>Before you start</h2>
+      <p class="status"><span class="dot" id="dot"></span><span id="midiState">Checking Web MIDI support…</span></p>
+      <p class="note" style="margin:10px 0 0">Works best in <b>Chrome</b>, <b>Edge</b>, <b>Brave</b> or <b>Opera</b> on desktop. Connect your synth by USB/MIDI interface <b>before</b> opening an editor, and allow MIDI access when the browser asks.</p>
+    </div>
+    <div class="card">
+      <h2>💬 Requests &amp; fixes</h2>
+      <p>Found a bug, or want a feature or a new editor? Send me a note.</p>
+      <button type="button" class="btn-msg" id="fbOpen">✉️ Write to me</button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>© <span id="yr"></span> · Not affiliated with Korg, Yamaha or Roland. All trademarks belong to their owners.</footer>
+</div>
+
+<dialog class="fb" id="fbDlg" aria-labelledby="fbT">
+  <form method="dialog" id="fbForm">
+    <h2 id="fbT">Requests &amp; fixes</h2>
+    <p>Tell me what to fix or add. Your message goes straight to me.</p>
+    <label for="fbType">Type</label>
+    <select id="fbType">
+      <option>Bug / fix</option>
+      <option>Feature request</option>
+      <option>New editor request</option>
+      <option>Other</option>
+    </select>
+    <label for="fbSub">Subject</label>
+    <input id="fbSub" maxlength="120" placeholder="e.g. DX: envelope graph jumps on touch" required>
+    <label for="fbMsg">Message</label>
+    <textarea id="fbMsg" placeholder="What happened, which editor, and your browser/device if it's a bug." required></textarea>
+    <input type="checkbox" id="fbBot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px" aria-hidden="true">
+    <p class="hint" id="fbStat" role="status" hidden></p>
+    <div class="acts">
+      <button type="button" id="fbCancel">Cancel</button>
+      <button type="submit" class="go">Send</button>
+    </div>
+    <p class="hint" id="fbHint" hidden>Couldn’t send it from here. <a href="#" id="fbMail">Open it in your email app</a> instead, or <a href="#" id="fbCopy">copy the message</a>.</p>
+  </form>
+</dialog>
+
+<script>
+/* ============ EDIT THIS LIST ============
+   live: true  -> opens the real editor at href
+   live: false -> shows "Coming soon" and opens soon.html (a non-working preview)
+   When an editor is ready: add its folder, set href to "folder/index.html" and live: true. */
+const EDITORS = [
+  {
+    id: "reface-cs", live: true,
+    name: "reface CS Editor", maker: "Yamaha",
+    href: "reface-cs/index.html", path: "reface-cs/",
+    desc: "Editor and librarian for the reface CS virtual analog synth: sliders, morphing between patches, arpeggiator and a 128-patch library.",
+    tags: ["Editor", "Librarian", "Web MIDI"], color: "#4cc9f0", keys: true
+  },
+  {
+    id: "reface-cp", live: true,
+    name: "reface CP Editor", maker: "Yamaha",
+    href: "reface-cp/index.html", path: "reface-cp/",
+    desc: "Editor and librarian for the reface CP electric piano: every knob and effect, morphing between patches, arpeggiator and a 128-patch library.",
+    tags: ["Editor", "Librarian", "Web MIDI"], color: "#f2b01e", keys: true
+  },
+  {
+    id: "reface-yc", live: true,
+    name: "reface YC Editor", maker: "Yamaha",
+    href: "reface-yc/index.html", path: "reface-yc/",
+    desc: "Editor and librarian for the reface YC combo organ: drawbars, effects, morphing between patches, arpeggiator and a 128-patch library.",
+    tags: ["Editor", "Librarian", "Web MIDI"], color: "#ff4036", keys: true
+  },
+  {
+    id: "reface-dx", live: true,
+    name: "reface DX Editor", maker: "Yamaha",
+    href: "reface-dx/index.html", path: "reface-dx/",
+    desc: "Editor and librarian for the reface DX FM synth: algorithm picker, drag-to-edit envelopes, operator controls, morphing, arpeggiator and a 128-patch library.",
+    tags: ["Editor", "Librarian", "FM synth", "Beta"], color: "#2fa86b", keys: true
+  },
+  {
+    id: "microkorg", live: false,
+    name: "microKORG Editor", maker: "Korg",
+    href: "soon.html?e=microkorg", path: "soon",
+    desc: "Full voice editor for the microKORG: every parameter, patch librarian and morphing over Web MIDI.",
+    tags: ["Editor", "Librarian", "Web MIDI"], color: "#ff6b57", keys: true
+  },
+  {
+    id: "sy22", live: false,
+    name: "SY-22 Voice Editor", maker: "Yamaha",
+    href: "soon.html?e=sy22", path: "soon",
+    desc: "Voice editor for the Yamaha SY-22 vector synth: elements, envelopes and the dynamic vector, from your browser.",
+    tags: ["Editor", "Vector synth", "Web MIDI"], color: "#a78bfa", keys: false
+  },
+  {
+    id: "vg88", live: false,
+    name: "VG-88 Editor", maker: "Roland",
+    href: "soon.html?e=vg88", path: "soon",
+    desc: "Editor for the Roland VG-88 guitar modeling processor: instrument, amp and effects, plus a patch library.",
+    tags: ["Editor", "Guitar", "Web MIDI"], color: "#7ee081", keys: false
+  }
+];
+
+/* ---------- build cards ---------- */
+const grid = document.getElementById("grid");
+const rnd = (seed) => { let s = seed; return () => (s = (s * 9301 + 49297) % 233280) / 233280; };
+
+EDITORS.forEach((e, idx) => {
+  const r = rnd(idx * 77 + 13);
+  const a = document.createElement("a");
+  a.className = "win" + (e.live ? "" : " soon");
+  a.href = e.href;
+  a.style.setProperty("--a", e.color);
+
+  const knobs = Array.from({length: 5}, () =>
+    `<div class="knob" style="--r:${Math.round(-130 + r()*260)}deg;--r2:${Math.round(-130 + r()*260)}deg"></div>`
+  ).join("");
+
+  let keys = "";
+  if (e.keys) {
+    const pattern = ["w","k","w","k","w","w","k","w","k","w","k","w","w","k","w","k","w","w"];
+    keys = `<div class="keys">${pattern.map(p => `<b class="${p==="k"?"k":""} ${r()>.8?"lit":""}"></b>`).join("")}</div>`;
+  }
+
+  a.innerHTML = `
+    <div class="bar"><i></i><i></i><i></i><span>${e.path}</span></div>
+    <span class="badge${e.live ? " live" : ""}">${e.live ? "Available now" : "Coming soon"}</span>
+    <div class="panel"><div class="led"></div>${knobs}${keys}</div>
+    <div class="body">
+      <div class="maker">${e.maker}</div>
+      <h3>${e.name}</h3>
+      <p>${e.desc}</p>
+      <div class="tags">${e.tags.map(t=>`<span>${t}</span>`).join("")}</div>
+      <div class="open">${e.live ? "Open editor" : "Coming soon · see a preview"}</div>
+    </div>`;
+  grid.appendChild(a);
+});
+
+/* ---------- feedback dialog (address is not shown anywhere on the page) ---------- */
+(function(){
+  var d=document.getElementById("fbDlg"),f=document.getElementById("fbForm"),
+      sub=document.getElementById("fbSub"),msg=document.getElementById("fbMsg"),
+      typ=document.getElementById("fbType"),hint=document.getElementById("fbHint");
+  var P=["bmFyci5z","eW50aGVk","aXRvckBw","cm90b24u","bWU="];
+  function to(){return atob(P.join(""))}
+  function text(){return "["+typ.value+"] "+sub.value.trim()+"\n\n"+msg.value.trim()}
+  document.getElementById("fbOpen").onclick=function(){hint.hidden=true;d.showModal();sub.focus()};
+  document.getElementById("fbCancel").onclick=function(){d.close()};
+  d.addEventListener("click",function(e){if(e.target===d)d.close()});
+  function subj(){return "[Gear Editors] "+typ.value+": "+sub.value.trim()}
+  function body(){return msg.value.trim()+"\n\n--\nSent from the Gear Editors hub \u00B7 "+navigator.userAgent}
+  var KEY="d095ee63-556f-4056-b4d9-286766ac15f6",stat=document.getElementById("fbStat"),go=f.querySelector(".go"),busy=false;
+  f.addEventListener("submit",function(e){
+    e.preventDefault();
+    if(busy)return;
+    if(document.getElementById("fbBot").checked){d.close();return}
+    busy=true;go.disabled=true;go.textContent="Sending…";hint.hidden=true;stat.hidden=true;
+    fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
+      body:JSON.stringify({access_key:KEY,subject:subj(),from_name:"Gear Editors hub",message:body()})})
+    .then(function(r){return r.json()}).then(function(j){
+      if(!j.success)throw 0;
+      stat.textContent="Message sent, thank you!";stat.hidden=false;f.reset();
+      setTimeout(function(){d.close();stat.hidden=true},1800);
+    }).catch(function(){hint.hidden=false})
+    .then(function(){busy=false;go.disabled=false;go.textContent="Send"});
+  });
+  document.getElementById("fbMail").onclick=function(e){
+    e.preventDefault();
+    location.href="mailto:"+to()+"?subject="+encodeURIComponent(subj())+"&body="+encodeURIComponent(body());
+  };
+  document.getElementById("fbCopy").onclick=function(e){
+    e.preventDefault();
+    var t=text(),el=e.target;
+    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){el.textContent="Copied"},function(){msg.select();el.textContent="Select and copy the message above"});
+  };
+})();
+
+/* ---------- Web MIDI support check ---------- */
+const dot = document.getElementById("dot"), st = document.getElementById("midiState");
+if (navigator.requestMIDIAccess) {
+  dot.className = "dot ok"; st.textContent = "Web MIDI is supported in this browser";
+} else {
+  dot.className = "dot bad"; st.textContent = "Web MIDI not supported here. Try Chrome or Edge.";
+}
+document.getElementById("yr").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
