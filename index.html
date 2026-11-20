@@ -185,7 +185,7 @@
 <dialog class="fb" id="fbDlg" aria-labelledby="fbT">
   <form method="dialog" id="fbForm">
     <h2 id="fbT">Requests &amp; fixes</h2>
-    <p>Tell me what to fix or add. Pressing Send opens your email app with the message ready to go.</p>
+    <p>Tell me what to fix or add. Your message goes straight to me.</p>
     <label for="fbType">Type</label>
     <select id="fbType">
       <option>Bug / fix</option>
@@ -197,11 +197,13 @@
     <input id="fbSub" maxlength="120" placeholder="e.g. DX: envelope graph jumps on touch" required>
     <label for="fbMsg">Message</label>
     <textarea id="fbMsg" placeholder="What happened, which editor, and your browser/device if it's a bug." required></textarea>
+    <input type="checkbox" id="fbBot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px" aria-hidden="true">
+    <p class="hint" id="fbStat" role="status" hidden></p>
     <div class="acts">
       <button type="button" id="fbCancel">Cancel</button>
       <button type="submit" class="go">Send</button>
     </div>
-    <p class="hint" id="fbHint" hidden>If nothing opened, your device has no email app set up. <a href="#" id="fbCopy">Copy the message</a> and send it from your usual mail.</p>
+    <p class="hint" id="fbHint" hidden>Couldn’t send it from here. <a href="#" id="fbMail">Open it in your email app</a> instead, or <a href="#" id="fbCopy">copy the message</a>.</p>
   </form>
 </dialog>
 
@@ -308,13 +310,27 @@ EDITORS.forEach((e, idx) => {
   document.getElementById("fbOpen").onclick=function(){hint.hidden=true;d.showModal();sub.focus()};
   document.getElementById("fbCancel").onclick=function(){d.close()};
   d.addEventListener("click",function(e){if(e.target===d)d.close()});
+  function subj(){return "[Gear Editors] "+typ.value+": "+sub.value.trim()}
+  function body(){return msg.value.trim()+"\n\n--\nSent from the Gear Editors hub \u00B7 "+navigator.userAgent}
+  var KEY="d095ee63-556f-4056-b4d9-286766ac15f6",stat=document.getElementById("fbStat"),go=f.querySelector(".go"),busy=false;
   f.addEventListener("submit",function(e){
     e.preventDefault();
-    var s="[Gear Editors] "+typ.value+": "+sub.value.trim();
-    var b=msg.value.trim()+"\n\n--\nSent from the Gear Editors hub \u00B7 "+navigator.userAgent;
-    hint.hidden=false;
-    location.href="mailto:"+to()+"?subject="+encodeURIComponent(s)+"&body="+encodeURIComponent(b);
+    if(busy)return;
+    if(document.getElementById("fbBot").checked){d.close();return}
+    busy=true;go.disabled=true;go.textContent="Sending…";hint.hidden=true;stat.hidden=true;
+    fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
+      body:JSON.stringify({access_key:KEY,subject:subj(),from_name:"Gear Editors hub",message:body()})})
+    .then(function(r){return r.json()}).then(function(j){
+      if(!j.success)throw 0;
+      stat.textContent="Message sent, thank you!";stat.hidden=false;f.reset();
+      setTimeout(function(){d.close();stat.hidden=true},1800);
+    }).catch(function(){hint.hidden=false})
+    .then(function(){busy=false;go.disabled=false;go.textContent="Send"});
   });
+  document.getElementById("fbMail").onclick=function(e){
+    e.preventDefault();
+    location.href="mailto:"+to()+"?subject="+encodeURIComponent(subj())+"&body="+encodeURIComponent(body());
+  };
   document.getElementById("fbCopy").onclick=function(e){
     e.preventDefault();
     var t=text(),el=e.target;
